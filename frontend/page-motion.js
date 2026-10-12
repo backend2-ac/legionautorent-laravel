@@ -1,3 +1,4 @@
+import {listenMedia} from './browser-support.js';
 import {queueFrame,cancelFrame} from './motion-frame.js';
 import {initAmbientMotion} from './ambient-motion.js';
 import './page-motion.css';
@@ -8,7 +9,7 @@ let currentInstance;
 // reaches the viewport, so a failed script never leaves content hidden.
 export function initPageMotion() {
   if (currentInstance) return currentInstance;
-  if (!('IntersectionObserver' in window) || !Element.prototype.animate) return () => {};
+  if (typeof window.IntersectionObserver!=='function' || !Element.prototype.animate) return () => {};
 
   initAmbientMotion();
   const reduced = matchMedia('(prefers-reduced-motion: reduce), (hover: none), (pointer: coarse)');
@@ -138,7 +139,7 @@ export function initPageMotion() {
   };
   const onPageShow = event => {if (event.persisted) scheduleScan();};
   document.addEventListener('focusin', onFocus);
-  reduced.addEventListener('change', onPreference);
+  const stopPreference=listenMedia(reduced,onPreference);
   window.addEventListener('pagehide', settle);
   window.addEventListener('pageshow', onPageShow);
   mutations.observe(document.body, {subtree: true, childList: true, attributes: true, attributeFilter: ['hidden']});
@@ -151,7 +152,7 @@ export function initPageMotion() {
     for (const state of accordions.values()) state.dispose();
     accordions.clear(); observed.clear(); dirtyGrids.clear();
     document.removeEventListener('focusin', onFocus);
-    reduced.removeEventListener('change', onPreference);
+    stopPreference();
     window.removeEventListener('pagehide', settle);
     window.removeEventListener('pageshow', onPageShow);
     currentInstance = null;

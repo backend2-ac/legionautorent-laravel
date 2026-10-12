@@ -84,7 +84,7 @@ button:focus-visible,.button:focus-visible,.icon-button:focus-visible,.car-detai
 .mercedes-caption{text-align:center}.mercedes-captions h1,.mercedes-display,.mercedes-step-line{margin-inline:auto}.mercedes-actions{justify-content:center}
 .mercedes-preview[data-mode=cinematic] .mercedes-caption{top:15%}.mercedes-preview[data-mode=cinematic] .mercedes-chapter{top:112px}
 @media(min-width:900px){.mercedes-captions h1{max-width:1080px;font-size:clamp(32px,3.25vw,48px)}.mercedes-eyebrow>span{border:0;background:transparent;padding:0}}
-@media(max-width:899px){.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:calc(80px + 4svh)}}
+@media(max-width:899px){.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:calc(80px + var(--hero-vh) * 4)}}
 @media(orientation:landscape) and (max-height:560px){.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:88px;text-align:left}.mercedes-captions h1,.mercedes-display,.mercedes-step-line{margin-left:0}.mercedes-actions{justify-content:flex-start}}
 .request-form>.request-feedback{grid-column:1/-1!important;width:100%;min-width:0;margin:0;padding:18px;border:1px solid var(--line);border-radius:3px;color:var(--white);scroll-margin-top:120px;outline:none}
 .request-feedback:not([hidden]){display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start}

@@ -1,3 +1,4 @@
+import {listenMedia,supportsWebp} from './browser-support.js';
 // One scroll pipeline on every device. No video seeks or autoplay permission.
 import {queueFrame,cancelFrame} from './motion-frame.js';
 
@@ -12,27 +13,29 @@ export function initMercedesPreview(root){
   const reduced=matchMedia('(prefers-reduced-motion:reduce)'),compact=matchMedia('(max-width:899px)');
   const bands=[...root.querySelectorAll('[data-band]')].map(el=>({el,start:+el.dataset.start,end:+el.dataset.end,opacity:-1}));
   const clamp=n=>Math.max(0,Math.min(1,n));
+  let jpeg=false,configuration=0,bitmapDisabled=false;
   let variant,enabled=false,dead=false,inView=true,frame=0,lastTick=0,shown=0,target=0;
-  let start=0,distance=1,lastWidth=innerWidth,drawn=-1,epoch=0,loaded=0;
+  let start=0,distance=1,end=1,lastWidth=innerWidth,drawn=-1,epoch=0,loaded=0;
   let activeFetches=0,activeDecodes=0,background=0,hasMoved=false,warmed=false;
   const encoded=new Map(),images=new Map(),fetching=new Set(),decoding=new Set();
   const requests=[],decodeQueue=[],controllers=new Set(),failed=new Set();
   const maxImages=()=>compact.matches?24:32;
-  const workerJobs=new Map();let worker,workerReady=false,workerSequence=0;
-  const stopWorker=()=>{
-    workerReady=false;worker?.terminate();worker=null;
-    workerJobs.forEach(job=>job.reject());workerJobs.clear();
+  const workerJobs=new Map();let worker,workerReady=false,workerSequence=0,workerDisabled=false,workerTimer;
+  const stopWorker=(disable=false)=>{
+    workerDisabled||=disable;clearTimeout(workerTimer);workerReady=false;worker?.terminate();worker=null;
+    workerJobs.forEach(job=>{clearTimeout(job.timer);job.reject();});workerJobs.clear();
   };
-  function startWorker(){if(worker||!data.count||reduced.matches||!('Worker'in window))return;try{
+  function startWorker(){if(!enabled||!variant||workerDisabled||worker||!data.count||reduced.matches||typeof window.Worker!=='function')return;try{
     worker=new Worker(new URL('./hero-frame-worker.js',import.meta.url));
+    workerTimer=setTimeout(()=>stopWorker(true),1500);
     worker.onmessage=({data})=>{
-      if('ready'in data){workerReady=data.ready;if(!data.ready)stopWorker();else prepareFrames(0);return;}
-      const job=workerJobs.get(data.id);workerJobs.delete(data.id);
+      if('ready'in data){clearTimeout(workerTimer);workerReady=data.ready;if(!data.ready)stopWorker(true);else if(enabled)prepareFrames(0);return;}
+      const job=workerJobs.get(data.id);workerJobs.delete(data.id);if(job)clearTimeout(job.timer);
       if(!job){data.image?.close();return;}
       if(data.error)job.reject();else job.resolve(data.image);
     };
-    worker.onerror=stopWorker;
-  }catch{/* Image decoding remains available without workers. */}}
+    worker.onerror=event=>{event.preventDefault?.();stopWorker(true);};
+  }catch{stopWorker(true);}}
 
   function paint(p){
     const staticMode=!enabled;
@@ -66,9 +69,11 @@ export function initMercedesPreview(root){
     const image=images.get(index);
     if(!image)return false;
     if(drawn!==index){
-      context||=canvas.getContext('2d',{alpha:false,desynchronized:true});
-      if(!context){fallback();return false;}
-      context.drawImage(image,0,0,canvas.width,canvas.height);
+      try{
+        context||=canvas.getContext('2d',{alpha:false,desynchronized:true});
+        if(!context)throw new Error('Canvas unavailable');
+        context.drawImage(image,0,0,canvas.width,canvas.height);
+      }catch{fallback('canvas');return false;}
       images.delete(index);images.set(index,image);drawn=index;
       root.dataset.frame=String(index);
       if(root.dataset.rendered!=='true')root.dataset.rendered='true';
@@ -89,16 +94,21 @@ export function initMercedesPreview(root){
   async function decode(blob){
     if(workerReady)try{
       return await new Promise((resolve,reject)=>{
-        const id=++workerSequence;workerJobs.set(id,{resolve,reject});
+        const id=++workerSequence;workerJobs.set(id,{resolve,reject,timer:setTimeout(()=>stopWorker(true),1500)});
         worker.postMessage({id,blob});
       });
     }catch{/* Fall back if worker decoding is unavailable. */}
-    if('createImageBitmap'in window){
-      try{return await createImageBitmap(blob);}catch{/* Older Safari uses Image. */}
+    if(!bitmapDisabled&&typeof window.createImageBitmap==='function'){
+      let expired=false,timer;
+      const bitmap=Promise.resolve().then(()=>createImageBitmap(blob));
+      bitmap.then(image=>{if(expired)image.close?.();},()=>{});
+      try{return await Promise.race([bitmap,new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;reject(new Error('Bitmap timeout'));},1500);})]);}
+      catch{bitmapDisabled=true;}
+      finally{clearTimeout(timer);}
     }
     const image=new Image(),url=URL.createObjectURL(blob);
     try{
-      await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
+      await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Image decode timeout')),4000);image.onload=()=>{clearTimeout(timer);resolve();};image.onerror=()=>{clearTimeout(timer);reject(new Error('Image decode failed'));};image.src=url;});
       return image;
     }finally{URL.revokeObjectURL(url);}
   }
@@ -112,7 +122,7 @@ export function initMercedesPreview(root){
         if(generation!==epoch||dead){image.close?.();return;}
         images.set(index,image);trimImages();schedule();
       }).catch(()=>{
-        if(generation===epoch){failed.add(Math.floor(index/data.packSize));if(drawn<0)fallback();}
+        if(generation===epoch){failed.add(Math.floor(index/data.packSize));if(drawn<=0)fallback('decode');}
       }).finally(()=>{
         if(generation===epoch){activeDecodes--;decoding.delete(index);pumpDecodes();}
       });
@@ -134,7 +144,7 @@ export function initMercedesPreview(root){
       if(offset+4>buffer.byteLength)throw new Error('Incomplete frame pack');
       const size=view.getUint32(offset,true);offset+=4;
       if(!size||offset+size>buffer.byteLength)throw new Error('Invalid frame pack');
-      frames.push(new Blob([new Uint8Array(buffer,offset,size)],{type:'image/webp'}));offset+=size;
+      frames.push(new Blob([new Uint8Array(buffer,offset,size)],{type:jpeg?'image/jpeg':'image/webp'}));offset+=size;
     }
     if(frames.length!==Math.min(data.packSize,data.count-index))throw new Error('Frame count mismatch');
     frames.forEach(blob=>encoded.set(index++,blob));loaded++;
@@ -158,13 +168,15 @@ export function initMercedesPreview(root){
         if(navigator.connection?.saveData||background>=limit)return;
         requests.push(background++);
       }
-      const index=requests.shift(),generation=epoch,controller=new AbortController();
+      const index=requests.shift(),generation=epoch,controller=typeof window.AbortController==='function'?new AbortController():{abort(){},signal:undefined};
       controllers.add(controller);fetching.add(index);activeFetches++;
-      const timeout=setTimeout(()=>controller.abort(),15000);
-      fetch(variant.packs[index],{signal:controller.signal,priority:hasMoved&&index===Math.floor(target*(data.count-1)/data.packSize)?'high':'low'}).then(response=>{
+      let timeout;
+      const request=fetch(variant.packs[index],{signal:controller.signal,priority:hasMoved&&index===Math.floor(target*(data.count-1)/data.packSize)?'high':'low'}).then(response=>{
         if(!response.ok)throw new Error('Frame response '+response.status);
         return response.arrayBuffer();
-      }).then(buffer=>{
+      });
+      const deadline=new Promise((_,reject)=>{timeout=setTimeout(()=>{controller.abort();reject(new Error('Frame timeout'));},15000);});
+      Promise.race([request,deadline]).then(buffer=>{
         if(generation!==epoch||dead)return;
         unpack(buffer,index);
         needFrame(Math.round(shown*(data.count-1)));
@@ -172,7 +184,7 @@ export function initMercedesPreview(root){
         if(drawn<0)needFrame(0);
         schedule();
       }).catch(error=>{
-        if(generation===epoch&&!dead){failed.add(index);root.dataset.failure=error.message||'Frame load';if(loaded===0&&index===0)fallback();}
+        if(generation===epoch&&!dead){failed.add(index);root.dataset.failure=error.message||'Frame load';if(loaded===0&&index===0)fallback('network');}
       }).finally(()=>{
         clearTimeout(timeout);controllers.delete(controller);
         if(generation===epoch){activeFetches--;fetching.delete(index);pumpFetches();}
@@ -224,13 +236,14 @@ export function initMercedesPreview(root){
   function schedule(){if(!frame&&enabled&&inView&&!document.hidden)frame=queueFrame(tick);}
   function onScroll(){
     target=clamp((scrollY-start)/distance);
-    if(target>.0001){hasMoved=true;startWorker();}
+    if(!observer)inView=scrollY+innerHeight>=start&&scrollY<=end;
     if(!enabled)return;
+    if(target>.0001){hasMoved=true;startWorker();}
     needPack(Math.floor(Math.round(target*(data.count-1))/data.packSize),true);pumpFetches();schedule();
   }
   function measure(){
     start=root.getBoundingClientRect().top+scrollY;
-    distance=Math.max(1,pin.offsetHeight-stage.offsetHeight);
+    distance=Math.max(1,pin.offsetHeight-stage.offsetHeight);end=start+root.offsetHeight;
     onScroll();
   }
   function release(){
@@ -239,18 +252,28 @@ export function initMercedesPreview(root){
     images.forEach(image=>image.close?.());images.clear();encoded.clear();fetching.clear();decoding.clear();
     requests.length=0;decodeQueue.length=0;failed.clear();activeFetches=activeDecodes=background=loaded=0;drawn=-1;
   }
-  function fallback(){
-    enabled=false;release();root.dataset.mode='static';root.dataset.state='fallback';stage.append(booking);paint(0);
+  function fallback(reason='unavailable'){
+    root.dataset.failure=reason;enabled=false;release();stopWorker();root.dataset.mode='static';root.dataset.state='fallback';stage.append(booking);paint(0);
+  }
+  function lockViewport(force=false){
+    if(compact.matches){if(force||!root.style.getPropertyValue('--hero-vh'))root.style.setProperty('--hero-vh',`${Math.max(1,innerHeight)/100}px`);}
+    else root.style.removeProperty('--hero-vh');
+  }
+  function adjustControls(){
+    const visible=window.visualViewport?visualViewport.height:innerHeight;
+    root.style.setProperty('--hero-obscured',`${compact.matches?Math.max(0,stage.offsetHeight-visible):0}px`);
   }
   function apply(){
-    if(!canvas.getContext||!data.count||reduced.matches){fallback();return;}
-    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=data[compact.matches?'mobile':'desktop'];
+    if(root.dataset.fallbackLocked==='true'||!canvas.getContext||!data.count||reduced.matches){fallback(reduced.matches?'reduced-motion':'unavailable');return;}
+    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=jpeg?data.jpeg:data[compact.matches?'mobile':'desktop'];
+    if(!variant){fallback('format');return;}
+    lockViewport();
     bands.forEach(band=>band.opacity=-1);
     canvas.width=variant.width;canvas.height=variant.height;
-    enabled=true;shown=0;root.dataset.variant=compact.matches?'mobile':'desktop';
+    enabled=true;shown=0;root.dataset.variant=jpeg?'jpeg':compact.matches?'mobile':'desktop';root.dataset.format=jpeg?'jpeg':'webp';
     if(compact.matches)root.append(booking);else stage.append(booking);
     root.dataset.mode='cinematic';root.dataset.state='loading';root.dataset.rendered='false';paint(0);
-    queueFrame(measure);
+    queueFrame(()=>{adjustControls();measure();});
     primePoster();
     needPack(0,true);schedule();
   }
@@ -260,30 +283,38 @@ export function initMercedesPreview(root){
       // Native HTML poster is already on screen. Avoid allocating/uploading a
       // canvas until movement; first frame downloading never delays the LCP.
       if(drawn<0){drawn=0;root.dataset.frame='0';root.dataset.state='ready';}
-      queueFrame(warmStart);schedule();
+      const generation=epoch;
+      const ready=typeof poster.decode==='function'?Promise.resolve().then(()=>poster.decode()):Promise.resolve();
+      ready.catch(()=>{}).then(()=>{if(generation===epoch&&enabled)queueFrame(()=>queueFrame(warmStart));});
+      schedule();
     }
   }
 
-  const observer=new IntersectionObserver(([entry])=>{
+  const observer=typeof window.IntersectionObserver==='function'?new IntersectionObserver(([entry])=>{
     inView=entry.isIntersecting;
     if(inView){onScroll();pumpFetches();}else{cancelFrame(frame);frame=0;lastTick=0;}
-  });observer.observe(root);
+  }):null;if(observer)observer.observe(root);
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',()=>{if(innerWidth!==lastWidth){lastWidth=innerWidth;measure();}},{passive:true});
+  window.addEventListener('resize',()=>{if(innerWidth!==lastWidth){lastWidth=innerWidth;lockViewport(true);measure();}else if(!compact.matches)measure();adjustControls();},{passive:true});
+  if(window.visualViewport)visualViewport.addEventListener('resize',adjustControls,{passive:true});
   window.addEventListener('orientationchange',()=>queueFrame(measure));
-  compact.addEventListener('change',apply);reduced.addEventListener('change',apply);
+  listenMedia(compact,apply);listenMedia(reduced,apply);
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){cancelFrame(frame);frame=0;lastTick=0;}
     else{onScroll();pumpFetches();}
   });
   window.addEventListener('pageshow',event=>{if(event.persisted){measure();onScroll();}});
-  window.addEventListener('pagehide',event=>{if(!event.persisted){dead=true;release();stopWorker();observer.disconnect();}});
+  window.addEventListener('pagehide',event=>{if(!event.persisted){dead=true;release();stopWorker();observer?.disconnect();}});
   root.querySelectorAll('a[href="#fleet"]').forEach(link=>link.addEventListener('click',event=>{
     const fleet=document.querySelector('#fleet');if(!fleet)return;
     event.preventDefault();history.pushState(null,'','#fleet');window.scrollTo({top:fleet.getBoundingClientRect().top+scrollY-96,behavior:'instant'});
     const heading=fleet.querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
   }));
   if(location.hash==='#fleet')inView=false;
+  canvas.addEventListener('contextlost',()=>fallback('canvas'));
   poster.addEventListener('load',primePoster);
-  apply();
+  root.dataset.initialized='true';clearTimeout(root.heroLoadTimer);
+  const generation=++configuration;
+  if(reduced.matches||!data.count){apply();return;}
+  supportsWebp().then(supported=>{if(dead||generation!==configuration)return;jpeg=!supported;if(jpeg)root.querySelectorAll('source[type="image/webp"]').forEach(source=>source.remove());apply();}).catch(()=>fallback('format'));
 }

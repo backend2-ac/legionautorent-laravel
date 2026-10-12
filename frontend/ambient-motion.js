@@ -1,3 +1,4 @@
+import {listenMedia} from './browser-support.js';
 import {queueFrame,cancelFrame} from './motion-frame.js';
 import './ambient-motion.css';
 
@@ -61,8 +62,8 @@ export function initAmbientMotion(){
   const schedule=()=>{if(!frame&&!document.hidden)frame=queueFrame(draw);};
   document.querySelectorAll('[data-ambient-parallax],.steps-grid,.class-marquee').forEach(el=>observer.observe(el));
   window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',measure,{passive:true});
-  const ro=new ResizeObserver(measure);ro.observe(document.body);measure();
-  reduced.addEventListener('change',()=>{animations.forEach(a=>a.cancel());schedule();});
+  if(typeof window.ResizeObserver==='function'){const ro=new ResizeObserver(measure);ro.observe(document.body);}measure();
+  listenMedia(reduced,()=>{animations.forEach(a=>a.cancel());schedule();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelFrame(frame);frame=0;}else schedule();});
   window.addEventListener('pagehide',()=>{animations.forEach(a=>a.cancel());cancelFrame(frame);frame=0;});
   const h1=document.querySelector('.mercedes-captions h1');

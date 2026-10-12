@@ -1,3 +1,4 @@
+import {listenMedia} from './browser-support.js';
 import {queueFrame,cancelFrame} from './motion-frame.js';
 // Optional, local effects. No work is scheduled on touch or reduced-motion.
 export function initGarageUI(){
@@ -18,7 +19,7 @@ export function initGarageUI(){
     window.addEventListener('scroll',hide,{passive:true});
     stopLight=()=>{cancelFrame(frame);light.remove();document.removeEventListener('pointermove',move);document.removeEventListener('pointerleave',hide);window.removeEventListener('scroll',hide);};
   };
-  mountLight();desktopEffects.addEventListener('change',mountLight);
+  mountLight();listenMedia(desktopEffects,mountLight);
 
   const sheet=document.querySelector('.catalog-sidebar');
   if(!sheet)return;
@@ -46,13 +47,13 @@ export function initGarageUI(){
   };
   const shut=()=>{sheet.open=false;restore();summary.focus({preventScroll:true});};
   close?.addEventListener('click',shut);
-  sheet.addEventListener('toggle',sync);narrow.addEventListener('change',sync);
+  sheet.addEventListener('toggle',sync);listenMedia(narrow,sync);
   document.addEventListener('keydown',event=>{
     if(!active)return;
     if(event.key==='Escape'){event.preventDefault();shut();}
     if(event.key==='Tab'){
       const items=[...form.querySelectorAll('a[href],button,input:not([type=hidden]),select,textarea')].filter(el=>!el.disabled);
-      const first=items[0],last=items.at(-1);
+      const first=items[0],last=items[items.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     }

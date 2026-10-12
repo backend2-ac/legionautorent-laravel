@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/mobile-hero-city-csv",
+  "technique": "Progressive canvas frame sequence; WebP preferred, JPEG fallback only without WebP support; static HTML poster on failure or reduced motion",
+  "master_sha256": "b141221a772ac33643ede1012d0c4c25ced0f889ec8e03b7ef50a0a99ee211ee",
+  "master_unchanged": true,
+  "variants": {
+    "desktop": {
+      "format": "image/webp",
+      "frames": 596,
+      "width": 1280,
+      "height": 720,
+      "bytes": 13688314,
+      "packs": 75
+    },
+    "mobile": {
+      "format": "image/webp",
+      "frames": 596,
+      "width": 768,
+      "height": 432,
+      "bytes": 6493780,
+      "packs": 75
+    },
+    "jpeg": {
+      "format": "image/jpeg",
+      "frames": 596,
+      "width": 768,
+      "height": 432,
+      "bytes": 13983320,
+      "packs": 75
+    }
+  },
+  "jpeg_reproduction_command": "php artisan hero:build-jpeg --quality=80 --no-interaction",
+  "browser_checks": {
+    "engines": [
+      "chromium",
+      "webkit",
+      "firefox"
+    ],
+    "fault_matrix": {
+      "cases": 33,
+      "passed": true,
+      "scenarios": [
+        "normal",
+        "legacy-media",
+        "legacy-no-apis",
+        "no-webp",
+        "hung-worker",
+        "hung-bitmap",
+        "no-canvas",
+        "frame-failure",
+        "script-failure",
+        "reduced",
+        "no-js"
+      ]
+    },
+    "layout_matrix": {
+      "cases": 23,
+      "passed": true
+    },
+    "early_interaction": {
+      "cases": 6,
+      "passed": true
+    },
+    "final_docker_recheck": {
+      "cases": 9,
+      "passed": true
+    }
+  },
+  "php_checks": {
+    "tests": 9,
+    "assertions": 2196,
+    "passed": true
+  },
+  "docker_production_build": {
+    "passed": true,
+    "app": "legion-laravel:local",
+    "web": "legion-laravel-web:local"
+  },
+  "lighthouse_mobile": {
+    "version": "13.5.0",
+    "fetch_time": "2026-10-12T09:50:54.213Z",
+    "performance": 97,
+    "lcp_ms": 2402.382,
+    "cls": 0,
+    "tbt_ms": 62,
+    "fcp_ms": 1238.9775,
+    "disable_storage_reset": true
+  },
+  "limits": [
+    "Current browser engines with simulated missing APIs, not every historical browser version",
+    "Physical iPhone/Android and Instagram/Telegram embedded browsers not individually tested",
+    "60 fps source does not guarantee 60 fps on every device",
+    "Reduced motion intentionally shows the poster"
+  ]
+}

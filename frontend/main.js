@@ -11,7 +11,7 @@ const $=(selector,root=document)=>root.querySelector(selector);
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 const header=$('.site-header');
 const headerMarker=$('.header-scroll-marker');
-if(header&&headerMarker&&'IntersectionObserver'in window){
+if(header&&headerMarker&&typeof window.IntersectionObserver==='function'){
   new IntersectionObserver(([entry])=>header.classList.toggle('is-scrolled',!entry.isIntersecting)).observe(headerMarker);
 }else window.addEventListener('scroll',()=>header?.classList.toggle('is-scrolled',scrollY>32),{passive:true});
 
@@ -48,7 +48,7 @@ const startPageMotion=()=>{
     else setTimeout(initPageMotion,0);
   };
   const hero=document.querySelector('[data-mercedes-preview][data-mode=cinematic]'),fleet=document.getElementById('fleet');
-  if(hero&&fleet&&'IntersectionObserver'in window){
+  if(hero&&fleet&&typeof window.IntersectionObserver==='function'){
     const nearby=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)){nearby.disconnect();start();}
     },{rootMargin:'320px'});
@@ -173,7 +173,7 @@ if(filters&&window.fetch){
 }
 
 const mercedesPreview=$('[data-mercedes-preview]');
-if(mercedesPreview)import('./mercedes-preview.js').then(({initMercedesPreview})=>initMercedesPreview(mercedesPreview)).catch(()=>{mercedesPreview.dataset.state='fallback';mercedesPreview.dataset.mode='static';});
+if(mercedesPreview)import('./mercedes-preview.js').then(({initMercedesPreview})=>initMercedesPreview(mercedesPreview)).catch(()=>{if(mercedesPreview.heroFallback)mercedesPreview.heroFallback('script-load');else{mercedesPreview.dataset.state='fallback';mercedesPreview.dataset.mode='static';}});
 // Defer analytics until LCP has had time to paint; retain all editable legacy IDs.
 const analytics=$('[data-analytics]');
 if(analytics){
