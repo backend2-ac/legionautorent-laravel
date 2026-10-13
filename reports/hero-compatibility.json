@@ -516,6 +516,122 @@
       "total-blocking-time": 46
     },
     "physical_devices_tested": false,
-    "live_deployment_verified": false
+    "live_deployment_verified": true,
+    "live_url": "https://legionautorent.113.kz/",
+    "live_script": "main-CaiibsGB.js",
+    "live_preview_cache_control": "public, max-age=31536000, immutable",
+    "live_preview_content_type": "application/octet-stream",
+    "live_checks": [
+      {
+        "profile": "desktop",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 118,
+            "first_change_ms": 208,
+            "max_hold_ms": 208,
+            "max_moving_hold_ms": 139,
+            "mean_frame_distance": 8.4,
+            "end_frame": 585,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "22",
+              "decoded": "9",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9832",
+              "frame": "585",
+              "quality": "preview"
+            }
+          },
+          "reverse": {
+            "changes": 231,
+            "first_change_ms": 63,
+            "max_hold_ms": 91,
+            "max_moving_hold_ms": 91,
+            "mean_frame_distance": 8.3,
+            "end_frame": 7,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "27",
+              "decoded": "9",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0118",
+              "frame": "7",
+              "quality": "full",
+              "failure": "Frame timeout"
+            }
+          }
+        }
+      },
+      {
+        "profile": "mobile-5mbps",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 106,
+            "first_change_ms": 465,
+            "max_hold_ms": 465,
+            "max_moving_hold_ms": 326,
+            "mean_frame_distance": 8.4,
+            "end_frame": 585,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "21",
+              "decoded": "0",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9832",
+              "frame": "585",
+              "quality": "preview"
+            }
+          },
+          "reverse": {
+            "changes": 286,
+            "first_change_ms": 67,
+            "max_hold_ms": 91,
+            "max_moving_hold_ms": 91,
+            "mean_frame_distance": 8.4,
+            "end_frame": 10,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "56",
+              "decoded": "21",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0168",
+              "frame": "10",
+              "quality": "preview"
+            }
+          }
+        }
+      },
+      {
+        "profile": "midpoint-cold",
+        "passed": true,
+        "phases": {}
+      }
+    ]
   }
 }
