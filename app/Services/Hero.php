@@ -16,7 +16,7 @@ class Hero
             if (is_file($manifest)) {
                 $d = json_decode(file_get_contents($manifest), true);
                 if (($d['master'] ?? null) === $site->hero_video_path) {
-                    $seq = ['count' => $d['count'], 'fps' => $d['fps'], 'duration' => $d['duration'], 'packSize' => $d['pack_size']];
+                    $seq = ['preview' => $d['preview'] ?? [], 'count' => $d['count'], 'fps' => $d['fps'], 'duration' => $d['duration'], 'packSize' => $d['pack_size']];
                     foreach (array_filter(['mobile', 'desktop', isset($d['jpeg']) ? 'jpeg' : null, isset($d['fullhd']) ? 'fullhd' : null]) as $n) {
                         $seq[$n] = ['width' => $d[$n]['width'], 'height' => $d[$n]['height'], 'bytes' => $d[$n]['bytes'], 'packs' => array_column($d[$n]['packs'], 'url')];
                     }

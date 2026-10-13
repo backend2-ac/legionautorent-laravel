@@ -1,6 +1,6 @@
 {
   "frontend/main.js": {
-    "file": "assets/main-BIdBkOku.js",
+    "file": "assets/main-CaiibsGB.js",
     "name": "main",
     "src": "frontend/main.js",
     "isEntry": true,
@@ -15,7 +15,7 @@
     ]
   },
   "frontend/mercedes-preview.js": {
-    "file": "assets/mercedes-preview-DgSwaCje.js",
+    "file": "assets/mercedes-preview-D1XU8--n.js",
     "name": "mercedes-preview",
     "src": "frontend/mercedes-preview.js",
     "isDynamicEntry": true,
