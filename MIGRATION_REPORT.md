@@ -49,7 +49,7 @@ Runtime Docker — отдельный том, snapshot монтируется т
 
 [README](README.md), [инструкция PS.kz](DEPLOY_PS_KZ.md), [админка](ADMIN_GUIDE.md), [производительность](PERFORMANCE_REPORT.md), [проверка релиза](RELEASE_CHECKLIST.md), [сравнение SEO](SEO_LIVE_COMPARISON.md).
 
-Локальный Docker-предпросмотр: http://127.0.0.1:8004/; нативный: http://127.0.0.1:8003/. Админка: /control-legion/.
+Локальный Docker-предпросмотр: http://127.0.0.1:8004/; нативный: http://127.0.0.1:8003/. Админка: /admin/.
 
 Публичный PS.kz пока не развёрнут: доступы, тариф, PHP 8.4, домен и HTTPS проверяются на реальном сервере. Отдельный репозиторий — [legionautorent-laravel](https://github.com/AtazhanErbol/legionautorent-laravel), ветка main. Django main не заменяется. Удалённый [CI](https://github.com/AtazhanErbol/legionautorent-laravel/actions/runs/37777581477) успешно выполнил чистую установку Composer, npm build и полный PHPUnit на Linux.
 

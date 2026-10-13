@@ -92,5 +92,131 @@
     "Physical iPhone/Android and Instagram/Telegram embedded browsers not individually tested",
     "60 fps source does not guarantee 60 fps on every device",
     "Reduced motion intentionally shows the poster"
-  ]
+  ],
+  "fullscreen_release": {
+    "date": "2026-10-13",
+    "fullhd": {
+      "width": 1920,
+      "height": 1080,
+      "count": 596,
+      "quality": 86,
+      "bytes": 26197818,
+      "poster": "/static/hero/hero-poster-fullhd-e6701b84bb50.webp",
+      "poster_bytes": 29044
+    },
+    "packs": 75,
+    "portrait_fit": "contain",
+    "landscape_fit": "cover",
+    "reproduction_command": "php artisan hero:build-fullhd --quality=86 --no-interaction",
+    "viewport_checks": {
+      "cases": 29,
+      "passed": true,
+      "engines": [
+        "chromium",
+        "webkit",
+        "firefox"
+      ],
+      "sizes": [
+        [
+          1440,
+          900
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          390,
+          844
+        ],
+        [
+          320,
+          568
+        ],
+        [
+          844,
+          390
+        ],
+        [
+          820,
+          1180
+        ]
+      ],
+      "dpr": [
+        1,
+        2,
+        3
+      ]
+    },
+    "touch": {
+      "scroll_at_release": 325,
+      "scroll_after_momentum": 399
+    },
+    "fault_checks": {
+      "cases": 33,
+      "passed": true
+    },
+    "php_focused_tests": 22,
+    "php_admin_recheck": {
+      "tests": 13,
+      "assertions": 1061,
+      "passed": true
+    },
+    "docker_build_passed": true,
+    "admin_path": "/admin/",
+    "legacy_admin_redirect": 301,
+    "local_results": "output/fullscreen-release/",
+    "limits": [
+      "Current browser engines with simulated missing APIs, not every historical browser version",
+      "Physical iPhone/Android and Instagram/Telegram embedded browsers not individually tested",
+      "60 fps source does not guarantee 60 fps on every device",
+      "Reduced motion intentionally shows the poster"
+    ],
+    "lighthouse": [
+      {
+        "profile": "mobile",
+        "fetch_time": "2026-10-13T06:35:08.493Z",
+        "version": "13.5.0",
+        "performance": 87,
+        "lcp_ms": 3699.5739999999996,
+        "cls": 0,
+        "tbt_ms": 43,
+        "fcp_ms": 1308.9305,
+        "disable_storage_reset": true
+      },
+      {
+        "profile": "mobile-repeat",
+        "fetch_time": "2026-10-13T06:37:53.269Z",
+        "version": "13.5.0",
+        "performance": 97,
+        "lcp_ms": 2466.4440000000004,
+        "cls": 0,
+        "tbt_ms": 46,
+        "fcp_ms": 1217.1525000000001,
+        "disable_storage_reset": true
+      },
+      {
+        "profile": "mobile-confirmation",
+        "fetch_time": "2026-10-13T06:38:51.569Z",
+        "version": "13.5.0",
+        "performance": 97,
+        "lcp_ms": 2498.562042490674,
+        "cls": 0,
+        "tbt_ms": 44,
+        "fcp_ms": 1174.8512765566709,
+        "disable_storage_reset": true
+      },
+      {
+        "profile": "desktop",
+        "fetch_time": "2026-10-13T06:35:45.464Z",
+        "version": "13.5.0",
+        "performance": 100,
+        "lcp_ms": 726.6195,
+        "cls": 0,
+        "tbt_ms": 0,
+        "fcp_ms": 351.1775,
+        "disable_storage_reset": true
+      }
+    ]
+  }
 }

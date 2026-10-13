@@ -92,7 +92,7 @@ class Seo
         }if ($site->instagram) {
             $biz['sameAs'] = [$site->instagram];
         }$result[] = $biz;
-        if ($ctx['breadcrumbs'] ?? null) {
+        if (count($ctx['breadcrumbs'] ?? []) > 1) {
             $result[] = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => array_map(fn ($b, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $b[0], 'item' => $root.$b[1]], $ctx['breadcrumbs'], array_keys($ctx['breadcrumbs']))];
         }
         if ($car) {

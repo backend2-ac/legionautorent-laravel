@@ -19,7 +19,15 @@ export function initMercedesPreview(root){
   let activeFetches=0,activeDecodes=0,background=0,hasMoved=false,warmed=false;
   const encoded=new Map(),images=new Map(),fetching=new Set(),decoding=new Set();
   const requests=[],decodeQueue=[],controllers=new Set(),failed=new Set();
-  const maxImages=()=>compact.matches?24:32;
+  const maxImages=()=>Math.max(8,Math.min(compact.matches?24:32,Math.floor(96*1024*1024/((variant?.width||1280)*(variant?.height||720)*4))));
+  const variantName=()=>{
+    if(jpeg)return 'jpeg';
+    if(navigator.connection?.saveData)return compact.matches?'mobile':'desktop';
+    const portrait=innerHeight>innerWidth;
+    const displayedWidth=portrait?innerWidth:Math.max(innerWidth,innerHeight*16/9);
+    const pixels=displayedWidth*Math.min(devicePixelRatio||1,2);
+    return pixels>1280&&data.fullhd?'fullhd':pixels>768?'desktop':'mobile';
+  };
   const workerJobs=new Map();let worker,workerReady=false,workerSequence=0,workerDisabled=false,workerTimer;
   const stopWorker=(disable=false)=>{
     workerDisabled||=disable;clearTimeout(workerTimer);workerReady=false;worker?.terminate();worker=null;
@@ -265,12 +273,12 @@ export function initMercedesPreview(root){
   }
   function apply(){
     if(root.dataset.fallbackLocked==='true'||!canvas.getContext||!data.count||reduced.matches){fallback(reduced.matches?'reduced-motion':'unavailable');return;}
-    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=jpeg?data.jpeg:data[compact.matches?'mobile':'desktop'];
+    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=data[variantName()];
     if(!variant){fallback('format');return;}
     lockViewport();
     bands.forEach(band=>band.opacity=-1);
     canvas.width=variant.width;canvas.height=variant.height;
-    enabled=true;shown=0;root.dataset.variant=jpeg?'jpeg':compact.matches?'mobile':'desktop';root.dataset.format=jpeg?'jpeg':'webp';
+    enabled=true;shown=0;root.dataset.variant=variantName();root.dataset.format=jpeg?'jpeg':'webp';
     if(compact.matches)root.append(booking);else stage.append(booking);
     root.dataset.mode='cinematic';root.dataset.state='loading';root.dataset.rendered='false';paint(0);
     queueFrame(()=>{adjustControls();measure();});
@@ -295,7 +303,7 @@ export function initMercedesPreview(root){
     if(inView){onScroll();pumpFetches();}else{cancelFrame(frame);frame=0;lastTick=0;}
   }):null;if(observer)observer.observe(root);
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',()=>{if(innerWidth!==lastWidth){lastWidth=innerWidth;lockViewport(true);measure();}else if(!compact.matches)measure();adjustControls();},{passive:true});
+  window.addEventListener('resize',()=>{if(innerWidth!==lastWidth){lastWidth=innerWidth;lockViewport(true);if(enabled&&variant!==data[variantName()])apply();else measure();}else if(!compact.matches)measure();adjustControls();},{passive:true});
   if(window.visualViewport)visualViewport.addEventListener('resize',adjustControls,{passive:true});
   window.addEventListener('orientationchange',()=>queueFrame(measure));
   listenMedia(compact,apply);listenMedia(reduced,apply);

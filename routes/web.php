@@ -3,8 +3,21 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SiteController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/control-legion/{path?}', function (Request $request, ?string $path = null) {
+    $target = rtrim(route('filament.admin.pages.dashboard', [], false), '/');
+    if ($path !== null) {
+        $target .= '/'.ltrim($path, '/');
+    }
+    if ($query = $request->getQueryString()) {
+        $target .= '?'.$query;
+    }
+
+    return redirect($target, 301);
+})->where('path', '.*');
 
 Route::get('/healthz/', function () {
     try {

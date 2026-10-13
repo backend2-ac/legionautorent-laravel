@@ -80,7 +80,7 @@ class SiteController extends Controller
         }
         if ($city = City::where('active', true)->where('legacy_path', $path)->with('translations')->first()) {
             $cars = self::cars()->whereHas('cities', fn ($q) => $q->where('locations_city.id', $city->id))->get();
-            $ctx = ['seo' => Seo::page($city), 'city' => $city, 'cars' => $cars, 'car_count' => $cars->count(), 'min_price' => $cars->min('base_price'), 'steps' => self::blocks('step'), 'benefits' => self::blocks('benefit'), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))->get(), 'breadcrumbs' => $path === '/' ? [] : [[site_text('Главная'), home_url()], [localized($city, 'name'), language_url($path)]]];
+            $ctx = ['seo' => Seo::page($city), 'city' => $city, 'cars' => $cars, 'car_count' => $cars->count(), 'min_price' => $cars->min('base_price'), 'steps' => self::blocks('step'), 'benefits' => self::blocks('benefit'), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))->get(), 'breadcrumbs' => $path === '/' ? [] : [[site_text('Главная').' — '.localized($city, 'name'), language_url($path)]]];
 
             return self::render($path === '/' ? 'home' : 'city', $ctx);
         }

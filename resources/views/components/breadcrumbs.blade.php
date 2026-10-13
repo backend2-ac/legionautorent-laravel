@@ -1,1 +1,18 @@
-<?php if(truth(dv('breadcrumbs',get_defined_vars()))): ?><nav class="breadcrumbs container" aria-label="{{ site_text('Навигационная цепочка') }}">@forelse((dv('breadcrumbs',get_defined_vars())??[]) as $__pair) <?php [$label,$url]=$__pair;  ?> <?php if(truth($loop->last)): ?><span aria-current="page">{{ dv('label',get_defined_vars()) }}</span><?php else: ?><a href="{{ dv('url',get_defined_vars()) }}">{{ dv('label',get_defined_vars()) }}</a><span aria-hidden="true">/</span><?php endif; ?>@empty @endforelse</nav><?php endif; ?>
+@if (! empty($breadcrumbs))
+    <nav class="breadcrumbs container" aria-label="{{ site_text('Навигационная цепочка') }}">
+        <ol>
+            @foreach ($breadcrumbs as [$label, $url])
+                <li>
+                    @unless ($loop->first)
+                        <span class="breadcrumb-separator" aria-hidden="true">›</span>
+                    @endunless
+                    @if ($loop->last)
+                        <span aria-current="page">{{ $label }}</span>
+                    @else
+                        <a href="{{ $url }}">{{ $label }}</a>
+                    @endif
+                </li>
+            @endforeach
+        </ol>
+    </nav>
+@endif

@@ -45,9 +45,10 @@ class HeroCompatibilityTest extends CatalogueTestCase
         $site->hero_mobile_poster_path = '/static/hero/hero-poster-60fps-mobile.webp';
         $hero = Hero::context($site);
         $this->assertCount(75, $hero['sequence']['jpeg']['packs']);
-        $this->assertSame('/static/hero/hero-poster-60fps-desktop.jpg', $hero['fallback_poster']);
+        $manifest = json_decode(file_get_contents(public_path('static/hero/sequence.json')), true);
+        $this->assertSame($manifest['fullhd']['poster_jpeg'], $hero['fallback_poster']);
         $this->assertSame('/static/hero/hero-poster-60fps-mobile.jpg', $hero['fallback_mobile']);
         $this->assertSame(596, $hero['sequence']['count']);
-        $this->get('/')->assertOk()->assertSee('type="image/webp"', false)->assertSee('hero-poster-60fps-desktop.jpg', false)->assertSee('hero-poster-60fps-mobile.jpg', false);
+        $this->get('/')->assertOk()->assertSee('type="image/webp"', false)->assertSee($manifest['fullhd']['poster_jpeg'], false)->assertSee('hero-poster-60fps-mobile.jpg', false);
     }
 }

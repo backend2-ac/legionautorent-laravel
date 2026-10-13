@@ -47,9 +47,9 @@ class AdminFeaturesTest extends CatalogueTestCase
         $this->assertNotNull($group);
         $manager->groups()->attach($group);
         $this->actingAs($manager);
-        $this->get('/control-legion/leads')->assertOk();
-        $this->get('/control-legion/site-settings')->assertForbidden();
-        $this->get('/control-legion/users')->assertForbidden();
+        $this->get('/admin/leads')->assertOk();
+        $this->get('/admin/site-settings')->assertForbidden();
+        $this->get('/admin/users')->assertForbidden();
     }
 
     public function test_cms_saves_are_audited_without_passwords(): void
