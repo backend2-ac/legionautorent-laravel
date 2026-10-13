@@ -9,7 +9,8 @@ export function initMercedesPreview(root){
   let context;
   const stage=root.querySelector('.mercedes-stage'),booking=root.querySelector('.search-wrap');
   const pin=root.querySelector('.mercedes-pin'),actions=root.querySelector('[data-hero-actions]');
-  let actionsVisible;
+  const recovery=root.querySelector('[data-hero-recovery]'),retry=root.querySelector('[data-hero-retry]');
+  let actionsVisible,motionOptIn=false;
   const progress=root.querySelector('.mercedes-progress span'),chapter=root.querySelector('[data-chapter]');
   const reduced=matchMedia('(prefers-reduced-motion:reduce)'),compact=matchMedia('(max-width:899px)');
   const bands=[...root.querySelectorAll('[data-band]')].map(el=>({el,start:+el.dataset.start,end:+el.dataset.end,opacity:-1}));
@@ -34,7 +35,7 @@ export function initMercedesPreview(root){
     workerDisabled||=disable;clearTimeout(workerTimer);workerReady=false;worker?.terminate();worker=null;
     workerJobs.forEach(job=>{clearTimeout(job.timer);job.reject();});workerJobs.clear();
   };
-  function startWorker(){if(!enabled||!variant||workerDisabled||worker||!data.count||reduced.matches||typeof window.Worker!=='function')return;try{
+  function startWorker(){if(!enabled||!variant||workerDisabled||worker||!data.count||(reduced.matches&&!motionOptIn)||typeof window.Worker!=='function')return;try{
     worker=new Worker(new URL('./hero-frame-worker.js',import.meta.url));
     workerTimer=setTimeout(()=>stopWorker(true),1500);
     worker.onmessage=({data:message})=>{
@@ -269,6 +270,7 @@ export function initMercedesPreview(root){
   }
   function fallback(reason='unavailable'){
     root.dataset.failure=reason;enabled=false;release();stopWorker();root.dataset.mode='static';root.dataset.state='fallback';stage.append(booking);paint(0);
+    if(recovery&&retry){recovery.hidden=!data.count;retry.textContent=reason==='reduced-motion'?retry.dataset.enableLabel:retry.dataset.retryLabel;}
   }
   function lockViewport(force=false){
     if(compact.matches){if(force||!root.style.getPropertyValue('--hero-vh'))root.style.setProperty('--hero-vh',`${Math.max(1,innerHeight)/100}px`);}
@@ -279,12 +281,13 @@ export function initMercedesPreview(root){
     root.style.setProperty('--hero-obscured',`${compact.matches?Math.max(0,stage.offsetHeight-visible):0}px`);
   }
   function apply(){
-    if(root.dataset.fallbackLocked==='true'||!canvas.getContext||!data.count||reduced.matches){fallback(reduced.matches?'reduced-motion':'unavailable');return;}
+    if(!canvas.getContext||!data.count||(reduced.matches&&!motionOptIn)){fallback(reduced.matches?'reduced-motion':'unavailable');return;}
     enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=data[variantName()];
     if(!variant){fallback('format');return;}
     lockViewport();
     bands.forEach(band=>band.opacity=-1);
     canvas.width=variant.width;canvas.height=variant.height;
+    if(recovery)recovery.hidden=true;delete root.dataset.failure;
     enabled=true;shown=0;root.dataset.variant=variantName();root.dataset.format=jpeg?'jpeg':'webp';
     const previewSource=data.preview?.[jpeg?'jpeg':'webp'];
     preview=createHeroPreview(previewSource?{...previewSource,mime:jpeg?'image/jpeg':'image/webp'}:null,{
@@ -317,7 +320,8 @@ export function initMercedesPreview(root){
   window.addEventListener('resize',()=>{if(innerWidth!==lastWidth){lastWidth=innerWidth;lockViewport(true);if(enabled&&variant!==data[variantName()])apply();else measure();}else if(!compact.matches)measure();adjustControls();},{passive:true});
   if(window.visualViewport)visualViewport.addEventListener('resize',adjustControls,{passive:true});
   window.addEventListener('orientationchange',()=>queueFrame(measure));
-  listenMedia(compact,apply);listenMedia(reduced,apply);
+  listenMedia(compact,apply);listenMedia(reduced,()=>{motionOptIn=false;configure();});
+  retry?.addEventListener('click',()=>{motionOptIn=reduced.matches;root.scrollIntoView({block:'start',behavior:'instant'});configure();});
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){cancelFrame(frame);frame=0;lastTick=0;}
     else{onScroll();pumpFetches();}
@@ -333,7 +337,13 @@ export function initMercedesPreview(root){
   canvas.addEventListener('contextlost',()=>fallback('canvas'));
   poster.addEventListener('load',primePoster);
   root.dataset.initialized='true';clearTimeout(root.heroLoadTimer);
-  const generation=++configuration;
-  if(reduced.matches||!data.count){apply();return;}
-  supportsWebp().then(supported=>{if(dead||generation!==configuration)return;jpeg=!supported;if(jpeg)root.querySelectorAll('source[type="image/webp"]').forEach(source=>source.remove());apply();}).catch(()=>fallback('format'));
+  function configure(){
+    const generation=++configuration;
+    if((reduced.matches&&!motionOptIn)||!data.count){apply();return;}
+    supportsWebp().then(supported=>{if(dead||generation!==configuration)return;jpeg=!supported;if(jpeg)root.querySelectorAll('source[type="image/webp"]').forEach(source=>source.remove());apply();}).catch(()=>fallback('format'));
+  }
+  // A late module can recover from the loading deadline. If the visitor has
+  // already reached the catalogue, leave the page in place until they opt in.
+  if(root.dataset.failure==='script-timeout'&&root.getBoundingClientRect().bottom<=0){fallback('late-script');return;}
+  configure();
 }
