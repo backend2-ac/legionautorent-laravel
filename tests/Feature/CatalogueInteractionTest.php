@@ -10,10 +10,10 @@ class CatalogueInteractionTest extends CatalogueTestCase
 {
     public function test_catalogue_filters_and_partial_responses_retain_server_rendered_cars(): void
     {
-        $response = $this->get('/cars/?city=kostanay&sort=price')->assertOk();
+        $response = $this->get('/cars/kostanay/?sort=price')->assertOk();
         $count = Car::public()->whereHas('cities', fn ($q) => $q->where('slug', 'kostanay'))->count();
         $this->assertSame($count, substr_count($response->getContent(), 'class="car-card"'));
-        $partial = $this->withHeader('X-Legion-Partial', 'catalog')->get('/cars/?city=kostanay')->assertOk();
+        $partial = $this->withHeader('X-Legion-Partial', 'catalog')->get('/cars/kostanay/')->assertOk();
         $partial->assertHeader('X-Legion-Selected-City', 'kostanay')->assertDontSee('<html', false);
         $this->assertSame($count, substr_count($partial->getContent(), 'class="car-card"'));
     }

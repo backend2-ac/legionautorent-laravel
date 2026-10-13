@@ -1,0 +1,185 @@
+{
+  "version": "2026-10-12",
+  "pages": [
+    {
+      "model": "City",
+      "path": "/ustkamenogorsk/",
+      "fields": {
+        "seo_title": "Аренда авто без водителя в Усть-Каменогорске | LEGIONAUTORENT",
+        "seo_description": "Аренда авто без водителя в Усть-Каменогорске от 20000 ₸/сутки. Прокат автомобилей посуточно, большой выбор моделей, доставка авто по городу. LegionAutorent."
+      }
+    },
+    {
+      "model": "City",
+      "path": "/kostanay/",
+      "fields": {
+        "seo_description": "Аренда авто без водителя в Костанае от Legion Auto Rent. Прокат автомобилей посуточно, большой выбор машин, выгодные условия аренды. Забронируйте авто!"
+      }
+    },
+    {
+      "model": "City",
+      "path": "/pavlodar/",
+      "fields": {
+        "seo_title": "Аренда авто без водителя в Павлодаре | LEGIONAUTORENT",
+        "seo_description": "Аренда авто без водителя в Павлодаре от Legion Auto Rent. Прокат автомобилей посуточно, большой выбор машин, выгодные условия аренды. Забронируйте авто!"
+      }
+    },
+    {
+      "model": "City",
+      "path": "/",
+      "fields": {
+        "seo_description": "Аренда авто без водителя в Астане от LegionAutorent. Прокат автомобилей посуточно/почасово, большой выбор машин, выгодные условия аренды. Забронируйте авто!"
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/contacts/",
+      "fields": {
+        "seo_title": "Контакты Legionautorent | Аренда авто в Казахстане",
+        "seo_description": "Контакты Legionautorent — аренда авто без водителя в Казахстане. Телефоны, адреса и способы связи. Свяжитесь с нами для консультации и бронирования авто.",
+        "seo_h1": "Контакты Legionautorent"
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/rental-conditions/",
+      "fields": {
+        "seo_title": "Условия аренды авто без водителя | Legionautorent",
+        "seo_description": "Узнайте условия аренды авто без водителя в Legionautorent: необходимые документы, требования к водителю, депозит, стоимость, сроки проката и возврат автомобиля.",
+        "seo_h1": "Условия аренды автомобилей без водителя"
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/cars/astana/",
+      "fields": {
+        "seo_title": "Автопарк в Астане — аренда авто с ценами | Legionautorent",
+        "seo_description": "Выбирайте автомобили в аренду без водителя в Астане! Автопарк Legionautorent: разные модели машин, цены на посуточный прокат и условия аренды. Забронируйте авто.",
+        "seo_h1": "Автопарк в Астане — автомобили в аренду с ценами"
+      },
+      "create": {
+        "slug": "fleet-astana",
+        "title": "Автопарк в Астане",
+        "body": "<p>Выбирайте автомобили в аренду без водителя в Астане! Автопарк Legionautorent: разные модели машин, цены на посуточный прокат и условия аренды. Забронируйте авто.</p>",
+        "robots": "index,follow",
+        "active": true,
+        "show_in_footer": false
+      },
+      "translations": {
+        "en": {
+          "name": "Fleet in Astana",
+          "title": "Car rental in Astana — fleet and prices | LEGIONAUTORENT",
+          "description": "Explore the LEGIONAUTORENT fleet in Astana: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.",
+          "h1": "Rental cars in Astana — fleet and daily rates",
+          "content": "<p>Explore the LEGIONAUTORENT fleet in Astana: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.</p>"
+        },
+        "kk": {
+          "name": "Астанада автопарк",
+          "title": "Астанада көлік жалдау — автопарк пен бағалар | LEGIONAUTORENT",
+          "description": "Астанада LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.",
+          "h1": "Астанада жалға берілетін көліктер мен бағалар",
+          "content": "<p>Астанада LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.</p>"
+        }
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/cars/pavlodar/",
+      "fields": {
+        "seo_title": "Прокат авто в Павлодаре — автопарк и цены | Legionautorent",
+        "seo_description": "Ищете автомобиль напрокат в Павлодаре? Изучите автопарк Legionautorent: доступные модели, стоимость аренды посуточно и характеристики машин. Выберите подходящее авто.",
+        "seo_h1": "Автопарк автомобилей для аренды в Павлодаре"
+      },
+      "create": {
+        "slug": "fleet-pavlodar",
+        "title": "Автопарк в Павлодаре",
+        "body": "<p>Ищете автомобиль напрокат в Павлодаре? Изучите автопарк Legionautorent: доступные модели, стоимость аренды посуточно и характеристики машин. Выберите подходящее авто.</p>",
+        "robots": "index,follow",
+        "active": true,
+        "show_in_footer": false
+      },
+      "translations": {
+        "en": {
+          "name": "Fleet in Pavlodar",
+          "title": "Car rental in Pavlodar — fleet and prices | LEGIONAUTORENT",
+          "description": "Explore the LEGIONAUTORENT fleet in Pavlodar: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.",
+          "h1": "Rental cars in Pavlodar — fleet and daily rates",
+          "content": "<p>Explore the LEGIONAUTORENT fleet in Pavlodar: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.</p>"
+        },
+        "kk": {
+          "name": "Павлодарда автопарк",
+          "title": "Павлодарда көлік жалдау — автопарк пен бағалар | LEGIONAUTORENT",
+          "description": "Павлодарда LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.",
+          "h1": "Павлодарда жалға берілетін көліктер мен бағалар",
+          "content": "<p>Павлодарда LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.</p>"
+        }
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/cars/kostanay/",
+      "fields": {
+        "seo_title": "Аренда автомобилей в Костанае — автопарк | Legionautorent",
+        "seo_description": "Автопарк Legionautorent в Костанае: автомобили для аренды без водителя с актуальными ценами. Сравните машины, узнайте стоимость проката и забронируйте подходящую модель.",
+        "seo_h1": "Автопарк в Костанае — выбор автомобилей напрокат"
+      },
+      "create": {
+        "slug": "fleet-kostanay",
+        "title": "Автопарк в Костанае",
+        "body": "<p>Автопарк Legionautorent в Костанае: автомобили для аренды без водителя с актуальными ценами. Сравните машины, узнайте стоимость проката и забронируйте подходящую модель.</p>",
+        "robots": "index,follow",
+        "active": true,
+        "show_in_footer": false
+      },
+      "translations": {
+        "en": {
+          "name": "Fleet in Kostanay",
+          "title": "Car rental in Kostanay — fleet and prices | LEGIONAUTORENT",
+          "description": "Explore the LEGIONAUTORENT fleet in Kostanay: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.",
+          "h1": "Rental cars in Kostanay — fleet and daily rates",
+          "content": "<p>Explore the LEGIONAUTORENT fleet in Kostanay: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.</p>"
+        },
+        "kk": {
+          "name": "Қостанайда автопарк",
+          "title": "Қостанайда көлік жалдау — автопарк пен бағалар | LEGIONAUTORENT",
+          "description": "Қостанайда LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.",
+          "h1": "Қостанайда жалға берілетін көліктер мен бағалар",
+          "content": "<p>Қостанайда LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.</p>"
+        }
+      }
+    },
+    {
+      "model": "Page",
+      "path": "/cars/ustkamenogorsk/",
+      "fields": {
+        "seo_title": "Автопарк Усть-Каменогорск — прокат авто | Legionautorent",
+        "seo_description": "Арендуйте автомобиль без водителя в Усть-Каменогорске. В автопарке Legionautorent представлены машины с ценами на посуточный прокат. Сравнивайте модели и бронируйте авто.",
+        "seo_h1": "Автопарк в Усть-Каменогорске — аренда авто без водителя"
+      },
+      "create": {
+        "slug": "fleet-ustkamenogorsk",
+        "title": "Автопарк в Усть-Каменогорске",
+        "body": "<p>Арендуйте автомобиль без водителя в Усть-Каменогорске. В автопарке Legionautorent представлены машины с ценами на посуточный прокат. Сравнивайте модели и бронируйте авто.</p>",
+        "robots": "index,follow",
+        "active": true,
+        "show_in_footer": false
+      },
+      "translations": {
+        "en": {
+          "name": "Fleet in Oskemen",
+          "title": "Car rental in Oskemen — fleet and prices | LEGIONAUTORENT",
+          "description": "Explore the LEGIONAUTORENT fleet in Oskemen: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.",
+          "h1": "Rental cars in Oskemen — fleet and daily rates",
+          "content": "<p>Explore the LEGIONAUTORENT fleet in Oskemen: self-drive rental cars, daily rates and vehicle specifications. Compare models and send a rental request.</p>"
+        },
+        "kk": {
+          "name": "Өскеменде автопарк",
+          "title": "Өскеменде көлік жалдау — автопарк пен бағалар | LEGIONAUTORENT",
+          "description": "Өскеменде LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.",
+          "h1": "Өскеменде жалға берілетін көліктер мен бағалар",
+          "content": "<p>Өскеменде LEGIONAUTORENT көліктерін жүргізушісіз жалға алыңыз. Көлік үлгілерін, тәуліктік бағаларын және сипаттамаларын салыстырып, өтінім жіберіңіз.</p>"
+        }
+      }
+    }
+  ]
+}

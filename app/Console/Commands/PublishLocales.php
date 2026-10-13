@@ -14,6 +14,7 @@ use App\Models\Page;
 use App\Models\SiteSettings;
 use App\Models\Translation;
 use App\Services\PublicContent;
+use App\Services\SeoRelease;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -99,6 +100,7 @@ class PublishLocales extends Command
                 $link->save();
             }
         });
+        SeoRelease::apply();
         PublicContent::forget();
         $this->info('Published '.$count.' translations. Existing published edits preserved; system-page SEO is editable in Pages.');
 

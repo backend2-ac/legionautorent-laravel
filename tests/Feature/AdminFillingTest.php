@@ -87,7 +87,7 @@ class AdminFillingTest extends CatalogueTestCase
         preg_match_all('#<script type="application/ld\+json"[^>]*>(.*?)</script>#s', $response->getContent(), $scripts);
         $vehicle = collect($scripts[1])->map(fn (string $json): array => json_decode($json, true))->first(fn (array $node): bool => is_array($node['@type'] ?? null) && in_array('Vehicle', $node['@type']));
         $this->assertArrayNotHasKey('brand', $vehicle);
-        $this->get('/cars/?city=kostanay')->assertOk()->assertSee('Новый автомобиль без классификации')->assertSee('/car/no-classification');
+        $this->get('/cars/kostanay/')->assertOk()->assertSee('Новый автомобиль без классификации')->assertSee('/car/no-classification');
         $this->get($city->legacy_path)->assertOk()->assertSee('Новый автомобиль без классификации');
         $this->get('/sitemap-cars.xml')->assertOk()->assertSee('/car/no-classification');
         Livewire::test(EditCar::class, ['record' => $car->id])->fillForm(['description' => 'Новое описание.'])->call('save')->assertHasNoFormErrors();

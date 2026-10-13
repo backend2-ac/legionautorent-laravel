@@ -112,11 +112,16 @@ function home_url(?string $lang = null): string
 {
     return language_url(request()->attributes->get('selected_city')?->legacy_path ?? '/', $lang);
 }
+function catalog_url(?City $city = null, ?string $lang = null): string
+{
+    $city ??= request()->attributes->get('selected_city');
+
+    return language_url($city?->getCatalogPath() ?? '/cars/', $lang);
+}
 function menu_url(string $path): string
 {
-    $city = request()->attributes->get('selected_city');
-    if ($city && str_starts_with($path, '/cars/')) {
-        $path .= (str_contains($path, '?') ? '&' : '?').'city='.rawurlencode($city->slug);
+    if ($path === '/cars/') {
+        return catalog_url();
     }
 
     return $path === '/' ? home_url() : language_url($path);
@@ -126,13 +131,17 @@ function city_switch_url(City $city): string
     $request = request();
     $path = $request->attributes->get('base_path', '/');
     $cities = $request->attributes->get('nav_cities', collect());
-    if ($path === '/' || $cities->contains('legacy_path', $path)) {
+    $query = [];
+    if ($cities->contains('legacy_path', $path)) {
         $path = $city->legacy_path;
+    } elseif ($path === '/cars/' || $request->attributes->get('catalog_city')) {
+        $path = $city->getCatalogPath();
+        $query = $request->only(['min_price', 'max_price', 'sort']);
+    } else {
+        $query['city'] = $city->slug;
     }
-    $query = $request->only(['min_price', 'max_price', 'sort']);
-    $query['city'] = $city->slug;
 
-    return language_url($path).'?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+    return language_url($path).($query ? '?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986) : '');
 }
 function map_link(?City $city, SiteSettings $site): string
 {

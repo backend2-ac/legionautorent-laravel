@@ -98,7 +98,7 @@ class CmsValidation
                 $path = $m->$pathKey;
                 $conflict = collect([Car::class => 'legacy_path', City::class => 'legacy_path', Page::class => 'path'])
                     ->contains(fn (string $column, string $model): bool => $model::where($column, $path)->when($m instanceof $model, fn ($query) => $query->where('id', '!=', $m->id ?? 0))->exists());
-                $reserved = ['/cars/', '/faq/', '/booking/', '/callback/', '/request-success/', '/healthz/', '/robots.txt', '/sitemap.xml'];
+                $reserved = [...City::where('active', true)->get()->map(fn (City $city) => $city->getCatalogPath())->all(), '/cars/', '/faq/', '/booking/', '/callback/', '/request-success/', '/healthz/', '/robots.txt', '/sitemap.xml'];
                 $installingSystemPage = $m instanceof Page && app()->runningInConsole() && request()->attributes->get('legion.installing_system_pages') === true;
                 if ($conflict || (! $installingSystemPage && (! $m->exists || $m->getOriginal($pathKey) !== $path) && in_array($path, $reserved)) || Redirect::where('old_path', $path)->where('active', true)->exists()) {
                     self::fail($pathKey, 'Этот адрес уже занят. Измените slug или укажите другой адрес страницы.');

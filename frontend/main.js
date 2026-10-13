@@ -148,6 +148,8 @@ if(filters&&window.fetch){
     try{
       const response=await fetch(url,{headers:{'X-Legion-Partial':'catalog'},signal:active.signal});
       if(!response.ok)throw new Error('Catalog response');
+      const current=new URL(response.url);
+      if(current.pathname!==location.pathname){location.assign(current.href);return;}
       const html=await response.text();result.innerHTML=html;initFleets(result);
       const city=response.headers.get('X-Legion-Selected-City');
       const option=[...($('[name=city]',filters)?.options||[])].find(item=>item.value===city);
@@ -156,15 +158,14 @@ if(filters&&window.fetch){
         label.textContent=city&&option?option.textContent:label.dataset.emptyLabel;
         const home=response.headers.get('X-Legion-Home');
         if(home)document.querySelectorAll('[data-city-home]').forEach(link=>link.href=home);
-        document.querySelectorAll('[data-site-nav]').forEach(link=>{const href=new URL(link.href);if(href.pathname.endsWith('/cars/')){city?href.searchParams.set('city',city):href.searchParams.delete('city');link.href=href;}});
       }
-      const current=new URL(url,location.href);
       document.querySelectorAll('[data-city-switch]').forEach(link=>{
         const href=new URL(link.href);href.search='';
         ['min_price','max_price','sort'].forEach(key=>{if(current.searchParams.has(key))href.searchParams.set(key,current.searchParams.get(key));});
-        href.searchParams.set('city',link.dataset.citySwitch);link.href=href;
+        link.href=href;
       });
-      if(push)history.pushState(null,'',url);$('meta[name=robots]').content='noindex,follow';
+      if(push)history.pushState(null,'',current.href);
+      const robots=response.headers.get('X-Legion-Robots');if(robots)$('meta[name=robots]').content=robots;
     }catch(error){if(error.name!=='AbortError')location.href=url;}finally{result.removeAttribute('aria-busy');}
   };
   filters.addEventListener('submit',event=>{event.preventDefault();const url=new URL(filters.action);url.search=new URLSearchParams(new FormData(filters)).toString();load(url);});

@@ -15,8 +15,8 @@ class Seo
     public static function languages(?CmsModel $obj): array
     {
         $languages = ['ru', ...($obj ? $obj->translations->filter(fn ($t) => $t->published && $t->title && $t->description && $t->h1 && $t->content)->pluck('language')->all() : ['kk', 'en'])];
-        if ($obj instanceof Page && in_array($obj->path, ['/cars/', '/faq/'])) {
-            $dependencies = $obj->path === '/cars/' ? self::catalogLanguages() : self::faqLanguages();
+        if ($obj instanceof Page && (str_starts_with($obj->path, '/cars/') || $obj->path === '/faq/')) {
+            $dependencies = str_starts_with($obj->path, '/cars/') ? self::catalogLanguages() : self::faqLanguages();
             $languages = array_values(array_intersect($languages, $dependencies));
         }
 

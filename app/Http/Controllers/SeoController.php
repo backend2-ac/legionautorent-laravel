@@ -48,6 +48,10 @@ class SeoController extends Controller
             $objects = (match ($section) {
                 'cities' => City::where('active', true),'cars' => Car::public(),'categories' => CarCategory::where('active', true),'pages' => Page::where('active', true)
             })->where('robots', 'index,follow')->with('translations')->get();
+            if ($section === 'pages') {
+                $catalogPaths = City::where('active', true)->get()->map(fn (City $city) => $city->getCatalogPath());
+                $objects = $objects->reject(fn (Page $page) => $page->path !== '/cars/' && str_starts_with($page->path, '/cars/') && ! $catalogPaths->contains($page->path));
+            }
             $entries = $objects->map(fn ($o) => [$o->getAbsoluteUrl(), Seo::languages($o), $o->updated_at?->toAtomString()])->all();
             if ($section === 'pages') {
                 $existing = array_column($entries, 0);

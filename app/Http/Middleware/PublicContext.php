@@ -23,12 +23,14 @@ class PublicContext
         $r->attributes->set('nonce', base64_encode(random_bytes(24)));
         if (! $private && ! in_array($base, ['/healthz', '/healthz/', '/robots.txt'])) {
             $cities = PublicContent::all()['cities'];
-            if ($r->query->has('city') && blank($r->query('city'))) {
+            if (($r->query->has('city') && blank($r->query('city'))) || ($base === '/cars/' && ! $r->query->has('city'))) {
                 $r->session()->forget('selected_city');
             }
             $chosen = $cities->firstWhere('slug', $r->query('city'));
-            if (! $chosen && $base !== '/') {
-                $chosen = $cities->firstWhere('legacy_path', $base);
+            $catalogCity = $cities->first(fn ($city) => $city->getCatalogPath() === $base);
+            $r->attributes->set('catalog_city', $catalogCity);
+            if (! $chosen) {
+                $chosen = $cities->firstWhere('legacy_path', $base) ?? $catalogCity;
             }if ($chosen) {
                 $r->session()->put('selected_city', $chosen->slug);
             }$selected = $chosen ?? $cities->firstWhere('slug', $r->session()->get('selected_city'));

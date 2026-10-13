@@ -22,7 +22,7 @@ class PublicLocalizationTest extends CatalogueTestCase
     {
         $before = Car::first()->only(['seo_title', 'seo_description', 'seo_h1', 'legacy_path', 'base_price']);
         $this->publish();
-        $this->assertSame(866, Translation::where('published', true)->count());
+        $this->assertSame(874, Translation::where('published', true)->count());
         $this->assertStringNotContainsString('Заполните текст в админке', City::where('slug', 'pavlodar')->first()->body);
         $this->assertSame($before, Car::first()->only(array_keys($before)));
         $translation = Translation::where('language', 'en')->where('content_type_id', Car::first()->contentTypeId())->first();
@@ -30,7 +30,7 @@ class PublicLocalizationTest extends CatalogueTestCase
         $translation->save();
         $this->publish();
         $this->assertSame('Edited by the administrator', $translation->fresh()->title);
-        $this->assertSame(866, Translation::where('published', true)->count());
+        $this->assertSame(874, Translation::where('published', true)->count());
         foreach (['/kk/', '/en/', '/kk/contacts/', '/en/contacts/', '/kk/privacy/', '/en/rental-conditions/', '/kk/cars/', '/en/faq/'] as $path) {
             $response = $this->get($path)->assertOk()->assertSee('hreflang="kk"', false)->assertSee('hreflang="en"', false);
             if (! str_contains($path, '/privacy/')) {
@@ -69,19 +69,19 @@ class PublicLocalizationTest extends CatalogueTestCase
     public function test_home_links_and_language_switch_keep_the_selected_city(): void
     {
         $this->publish();
-        $this->get('/kostanay/?city=kostanay')->assertOk();
+        $this->get('/kostanay/')->assertOk();
         $this->get('/contacts/')->assertSee('data-city-home href="/kostanay/"', false);
-        $catalogue = $this->get('/cars/')->assertOk();
+        $catalogue = $this->get('/cars/kostanay/')->assertOk();
         $this->assertSame(14, substr_count($catalogue->getContent(), 'class="car-card"'));
         $catalogue->assertSee('value="kostanay" selected', false);
-        $this->get('/cars/?city=')->assertOk();
+        $this->get('/cars/?city=')->assertRedirect('/cars/');
         $this->assertSame(91, substr_count($this->get('/cars/')->getContent(), 'class="car-card"'));
-        $this->get('/kostanay/?city=kostanay')->assertOk();
-        $this->get('/')->assertRedirect('/kostanay/');
-        $this->get('/en/')->assertRedirect('/en/kostanay/');
+        $this->get('/kostanay/')->assertOk();
+        $this->get('/')->assertOk()->assertSee('data-city-home href="/"', false);
+        $this->get('/en/')->assertOk();
         $this->get('/en/kostanay/')->assertOk()->assertSee('Self-drive car rental in Kostanay');
         $this->get('/en/contacts/')->assertSee('data-city-home href="/en/kostanay/"', false)->assertSee('data-city-label>Kostanay', false);
-        $this->get('/')->assertRedirect('/kostanay/');
+        $this->get('/')->assertOk()->assertSee('data-city-home href="/"', false);
     }
 
     public function test_filter_has_only_city_price_and_sorting_and_old_urls_still_work(): void

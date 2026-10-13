@@ -15,6 +15,7 @@ use App\Services\Seo;
 use App\Support\PublicForm;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -59,14 +60,28 @@ class SiteController extends Controller
     public function __invoke(Request $r): \Symfony\Component\HttpFoundation\Response
     {
         $path = $r->attributes->get('base_path', '/');
-        $selected = $r->attributes->get('selected_city');
-        if ($path === '/' && $selected && $selected->legacy_path !== '/') {
-            return redirect(home_url(), 302);
+        $cities = $r->attributes->get('nav_cities');
+        $landing = $cities?->firstWhere('legacy_path', $path);
+        $catalogCity = $r->attributes->get('catalog_city');
+        $isCatalog = $path === '/cars/' || $catalogCity;
+        if ($r->query->has('city') && ($landing || $isCatalog)) {
+            $explicitCity = $cities?->firstWhere('slug', $r->query('city'));
+            if ($explicitCity || blank($r->query('city'))) {
+                $target = $landing ? ($explicitCity ?? $landing)->legacy_path : ($explicitCity?->getCatalogPath() ?? '/cars/');
+                $query = $r->except('city');
+
+                return new RedirectResponse(language_url($target).($query ? '?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986) : ''), 301);
+            }
         }
         if (str_starts_with($path, '/kz/')) {
             return $this->missing();
         }
-        if ($path === '/cars/' || preg_match('#^/category/([a-zA-Z0-9_-]+)/$#', $path, $match)) {
+        if (str_starts_with($path, '/cars/') && $path !== '/cars/') {
+            if (! $catalogCity || Page::where('path', $path)->where('active', false)->exists()) {
+                return $this->missing();
+            }
+        }
+        if ($isCatalog || preg_match('#^/category/([a-zA-Z0-9_-]+)/$#', $path, $match)) {
             return $this->catalog($r, $match[1] ?? null);
         }
         if ($path === '/faq/') {
@@ -87,7 +102,7 @@ class SiteController extends Controller
         if ($car = self::cars()->where('legacy_path', $path)->with(['prices.translations', 'extra_specs.translations'])->first()) {
             $selected = $r->attributes->get('selected_city');
             $city = $selected && $car->cities->contains('id', $selected->id) ? $selected : $car->cities->firstWhere('active', true);
-            $ctx = ['car' => $car, 'city' => $city, 'seo' => Seo::page($car), 'related_cars' => self::cars()->when($car->category_id, fn ($query) => $query->where('category_id', $car->category_id))->where('id', '!=', $car->id)->when($city, fn ($query) => $query->whereHas('cities', fn ($cities) => $cities->where('locations_city.id', $city->id)))->limit(3)->get(), 'faqs' => self::faqs()->where('car_id', $car->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), language_url('/cars/')], [localized($car, 'name'), language_url($path)]], 'booking_form' => new PublicForm('booking', ['city' => $city?->id, 'car' => $car->id, 'source_token' => BookingController::token($path)]), 'car_whatsapp_message' => str_replace('%(car)s', localized($car, 'name'), site_text('Здравствуйте! Интересует аренда %(car)s.'))];
+            $ctx = ['car' => $car, 'city' => $city, 'seo' => Seo::page($car), 'related_cars' => self::cars()->when($car->category_id, fn ($query) => $query->where('category_id', $car->category_id))->where('id', '!=', $car->id)->when($city, fn ($query) => $query->whereHas('cities', fn ($cities) => $cities->where('locations_city.id', $city->id)))->limit(3)->get(), 'faqs' => self::faqs()->where('car_id', $car->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url($city)], [localized($car, 'name'), language_url($path)]], 'booking_form' => new PublicForm('booking', ['city' => $city?->id, 'car' => $car->id, 'source_token' => BookingController::token($path)]), 'car_whatsapp_message' => str_replace('%(car)s', localized($car, 'name'), site_text('Здравствуйте! Интересует аренда %(car)s.'))];
 
             return self::render('car_detail', $ctx);
         }
@@ -118,7 +133,8 @@ class SiteController extends Controller
         if ($slug && ! $cat) {
             return $this->missing();
         }$q = self::cars();
-        $cityFilter = $r->query->has('city') ? $r->query('city') : $r->attributes->get('selected_city')?->slug;
+        $catalogCity = $r->attributes->get('catalog_city');
+        $cityFilter = $r->query->has('city') ? $r->query('city') : $catalogCity?->slug;
         if ($cat) {
             $q->where('category_id', $cat->id);
         }$rules = ['city' => 'nullable|exists:locations_city,slug', 'category' => 'nullable|exists:cars_carcategory,slug', 'brand' => 'nullable|exists:cars_carbrand,slug', 'min_price' => 'nullable|integer|min:0', 'max_price' => 'nullable|integer|min:0', 'transmission' => 'nullable|in:automatic,manual', 'drive' => 'nullable|in:front,rear,all', 'seats' => 'nullable|integer|between:1,20', 'q' => 'nullable|string|max:100', 'sort' => 'nullable|in:price,-price,new', 'start_date' => 'nullable|date', 'end_date' => 'nullable|date|after:start_date'];
@@ -150,9 +166,9 @@ class SiteController extends Controller
                 $q->reorder()->orderBy($r->sort === 'new' ? 'created_at' : 'base_price', $r->sort === 'price' ? 'asc' : 'desc')->orderBy('id');
             }
         }$cars = $q->get();
-        $ctx = ['seo' => Seo::page($cat, title: site_text('Автопарк | LEGIONAUTORENT'), description: site_text('Выберите автомобиль для аренды без водителя. Цены, фотографии и классы автомобилей в LEGIONAUTORENT.'), h1: site_text('Ваш маршрут. Ваш автомобиль.'), noindex: count($r->query()) > 0 || filled($cityFilter), languages: $cat ? null : Seo::catalogLanguages()), 'category' => $cat, 'cars' => $cars, 'car_count' => $cars->count(), 'filter_form' => new PublicForm('filter', array_replace(['city' => $cityFilter], $r->query()), $errors), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), language_url('/cars/')]]];
+        $ctx = ['seo' => Seo::page($cat, title: site_text('Автопарк | LEGIONAUTORENT'), description: site_text('Выберите автомобиль для аренды без водителя. Цены, фотографии и классы автомобилей в LEGIONAUTORENT.'), h1: site_text('Ваш маршрут. Ваш автомобиль.'), noindex: collect($r->only(array_keys($rules)))->contains(fn ($value) => filled($value)), languages: $cat ? null : Seo::catalogLanguages()), 'city' => $catalogCity, 'category' => $cat, 'cars' => $cars, 'car_count' => $cars->count(), 'filter_form' => new PublicForm('filter', array_replace(['city' => $cityFilter], $r->query()), $errors), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url()]]];
         if ($r->header('X-Legion-Partial') === 'catalog') {
-            return self::render('components.catalog_results', $ctx)->header('X-Legion-Selected-City', $r->attributes->get('selected_city')?->slug ?? '')->header('X-Legion-Home', home_url());
+            return self::render('components.catalog_results', $ctx)->header('X-Legion-Selected-City', $r->attributes->get('selected_city')?->slug ?? '')->header('X-Legion-Home', home_url())->header('X-Legion-Robots', $ctx['seo']['robots']);
         }
 
         return self::render('catalog', $ctx);

@@ -14,31 +14,27 @@ class CityNavigationAndRequestTest extends CatalogueTestCase
     {
         $this->artisan('legion:publish-locales')->assertSuccessful();
         foreach (['', '/kk', '/en'] as $prefix) {
-            foreach (['/contacts/', '/rental-conditions/', '/cars/'] as $path) {
+            foreach (['/contacts/', '/rental-conditions/'] as $path) {
                 $response = $this->get($prefix.$path.'?city=kostanay')->assertOk();
                 $href = $this->cityLink($response->getContent(), 'ustkamenogorsk');
                 $this->assertSame($prefix.$path.'?city=ustkamenogorsk', $href);
                 $changed = $this->get($href)->assertOk();
                 $this->assertSame($prefix.$path, parse_url($href, PHP_URL_PATH));
                 $this->assertStringContainsString(localized(City::where('slug', 'ustkamenogorsk')->first(), 'name'), $changed->getContent());
-                if ($path === '/cars/') {
-                    $city = City::where('slug', 'ustkamenogorsk')->first();
-                    $this->assertSame($city->cars()->public()->count(), substr_count($changed->getContent(), 'class="car-card"'));
-                    $changed->assertSee('value="ustkamenogorsk" selected', false);
-                }
             }
         }
     }
 
     public function test_city_switch_keeps_catalogue_prices_sorting_and_home_behaviour(): void
     {
-        $response = $this->get('/cars/?city=kostanay&min_price=25000&max_price=80000&sort=-price')->assertOk();
+        $this->artisan('legion:publish-locales')->assertSuccessful();
+        $response = $this->get('/cars/kostanay/?min_price=25000&max_price=80000&sort=-price')->assertOk();
         $href = $this->cityLink($response->getContent(), 'ustkamenogorsk');
-        $this->assertSame('/cars/?min_price=25000&max_price=80000&sort=-price&city=ustkamenogorsk', $href);
+        $this->assertSame('/cars/ustkamenogorsk/?min_price=25000&max_price=80000&sort=-price', $href);
         $this->get($href)->assertOk()->assertSee('value="25000"', false)->assertSee('value="80000"', false)->assertSee('value="-price" selected', false);
-        $home = $this->get('/kostanay/?city=kostanay')->assertOk();
-        $this->assertSame('/ustkamenogorsk/?city=ustkamenogorsk', $this->cityLink($home->getContent(), 'ustkamenogorsk'));
-        $this->assertSame('/?city=astana', $this->cityLink($home->getContent(), 'astana'));
+        $home = $this->get('/kostanay/')->assertOk();
+        $this->assertSame('/ustkamenogorsk/', $this->cityLink($home->getContent(), 'ustkamenogorsk'));
+        $this->assertSame('/', $this->cityLink($home->getContent(), 'astana'));
     }
 
     public function test_public_request_forms_have_no_dates_and_submission_stores_a_dateless_lead(): void

@@ -31,7 +31,7 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
     {
         $this->artisan('legion:publish-locales')->assertSuccessful();
         foreach (['', '/kk', '/en'] as $prefix) {
-            $home = $this->get($prefix.'/kostanay/?city=kostanay')->assertOk();
+            $home = $this->get($prefix.'/kostanay/')->assertOk();
             $dom = new \DOMDocument;
             @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$home->getContent());
             $xpath = new \DOMXPath($dom);
@@ -39,14 +39,14 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
             $this->assertSame(0, $xpath->query('//nav[@class="breadcrumbs container"]//a')->length);
             $this->assertSame(1, $xpath->query('//nav[@class="breadcrumbs container"]//*[@aria-current="page"]')->length);
             $home->assertDontSee('"@type":"BreadcrumbList"', false);
-            foreach (['/contacts/', '/rental-conditions/', '/cars/'] as $path) {
+            foreach (['/contacts/', '/rental-conditions/', '/cars/kostanay/'] as $path) {
                 $page = $this->get($prefix.$path)->assertOk();
                 @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$page->getContent());
                 $xpath = new \DOMXPath($dom);
                 $links = $xpath->query('//nav[@class="breadcrumbs container"]//a');
                 $this->assertSame(1, $links->length);
                 $this->assertSame($prefix.'/kostanay/', $links->item(0)->getAttribute('href'));
-                $this->get($prefix.'/')->assertRedirect($prefix.'/kostanay/');
+                $this->get($links->item(0)->getAttribute('href'))->assertOk();
             }
         }
     }
@@ -82,6 +82,6 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
         $hero = Hero::context($site);
         $this->assertSame(1920, $hero['sequence']['fullhd']['width']);
         $this->assertSame($fullhd['poster'], $hero['poster']);
-        $this->get('/?city=astana')->assertOk()->assertSee($fullhd['poster'], false)->assertSee('fetchpriority="high"', false);
+        $this->get('/')->assertOk()->assertSee($fullhd['poster'], false)->assertSee('fetchpriority="high"', false);
     }
 }
