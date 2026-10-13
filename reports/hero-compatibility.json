@@ -218,5 +218,304 @@
         "disable_storage_reset": true
       }
     ]
+  },
+  "network_fix_2026_10_13": {
+    "source_commit": "34052830fb266c660f181d60fd6b1c170a03b18c",
+    "ci": "https://github.com/backend2-ac/legionautorent-laravel/actions/runs/38362962019",
+    "preview": {
+      "frames": 120,
+      "width": 640,
+      "height": 360,
+      "webp_bytes": 832428,
+      "first_pack_bytes": 213108,
+      "jpeg_bytes": 1899123
+    },
+    "profiles": [
+      {
+        "profile": "mobile-5mbps",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 106,
+            "first_change_ms": 472,
+            "max_hold_ms": 472,
+            "max_moving_hold_ms": 340,
+            "mean_frame_distance": 8.4,
+            "end_frame": 585,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "20",
+              "decoded": "0",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9832",
+              "frame": "585",
+              "quality": "preview"
+            }
+          },
+          "reverse": {
+            "changes": 275,
+            "first_change_ms": 62,
+            "max_hold_ms": 91,
+            "max_moving_hold_ms": 91,
+            "mean_frame_distance": 8.3,
+            "end_frame": 10,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "52",
+              "decoded": "21",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0168",
+              "frame": "10",
+              "quality": "preview"
+            }
+          }
+        }
+      },
+      {
+        "profile": "desktop-5mbps",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 105,
+            "first_change_ms": 486,
+            "max_hold_ms": 486,
+            "max_moving_hold_ms": 319,
+            "mean_frame_distance": 8.4,
+            "end_frame": 585,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "10",
+              "decoded": "0",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9832",
+              "frame": "585",
+              "quality": "preview"
+            }
+          },
+          "reverse": {
+            "changes": 186,
+            "first_change_ms": 63,
+            "max_hold_ms": 97,
+            "max_moving_hold_ms": 97,
+            "mean_frame_distance": 8.4,
+            "end_frame": 10,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "31",
+              "decoded": "9",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0168",
+              "frame": "10",
+              "quality": "preview"
+            }
+          }
+        }
+      },
+      {
+        "profile": "mobile-512kbps",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 48,
+            "first_change_ms": 3645,
+            "max_hold_ms": 3645,
+            "max_moving_hold_ms": 507,
+            "mean_frame_distance": 19.5,
+            "end_frame": 590,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "0",
+              "decoded": "0",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9916",
+              "frame": "590",
+              "quality": "preview"
+            }
+          },
+          "reverse": {
+            "changes": 121,
+            "first_change_ms": 76,
+            "max_hold_ms": 132,
+            "max_moving_hold_ms": 132,
+            "mean_frame_distance": 5.6,
+            "end_frame": 5,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "6",
+              "decoded": "5",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0084",
+              "frame": "5",
+              "quality": "preview"
+            }
+          }
+        }
+      },
+      {
+        "profile": "two-stalled-hd",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 299,
+            "first_change_ms": 132,
+            "max_hold_ms": 132,
+            "max_moving_hold_ms": 118,
+            "mean_frame_distance": 8.5,
+            "end_frame": 587,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "48",
+              "decoded": "9",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9866",
+              "frame": "587",
+              "quality": "full",
+              "failure": "Frame timeout"
+            }
+          },
+          "reverse": {
+            "changes": 410,
+            "first_change_ms": 49,
+            "max_hold_ms": 69,
+            "max_moving_hold_ms": 69,
+            "mean_frame_distance": 8.7,
+            "end_frame": 8,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "75",
+              "decoded": "9",
+              "variant": "fullhd",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0134",
+              "frame": "8",
+              "quality": "full",
+              "failure": "Frame timeout"
+            }
+          }
+        }
+      },
+      {
+        "profile": "preview-unavailable",
+        "passed": true,
+        "phases": {
+          "forward": {
+            "changes": 584,
+            "first_change_ms": 63,
+            "max_hold_ms": 63,
+            "max_moving_hold_ms": 56,
+            "mean_frame_distance": 8.4,
+            "end_frame": 587,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "75",
+              "decoded": "21",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.9866",
+              "frame": "587",
+              "quality": "full"
+            }
+          },
+          "reverse": {
+            "changes": 587,
+            "first_change_ms": 42,
+            "max_hold_ms": 55,
+            "max_moving_hold_ms": 55,
+            "mean_frame_distance": 8.4,
+            "end_frame": 8,
+            "state": {
+              "mercedesPreview": "",
+              "sequence": "true",
+              "state": "ready",
+              "mode": "cinematic",
+              "initialized": "true",
+              "loadedPacks": "75",
+              "decoded": "21",
+              "variant": "desktop",
+              "format": "webp",
+              "rendered": "true",
+              "progress": "0.0134",
+              "frame": "8",
+              "quality": "full"
+            }
+          }
+        }
+      }
+    ],
+    "midpoint_cold": true,
+    "release_compatibility_cases": 15,
+    "release_compatibility_passed": true,
+    "touch_fling": {
+      "release": {
+        "y": 544,
+        "frame": "35"
+      },
+      "later": {
+        "y": 2195,
+        "frame": "292"
+      },
+      "momentum": true,
+      "frames_changed": true
+    },
+    "lighthouse_mobile": {
+      "performance": 98.0,
+      "largest-contentful-paint": 2251.629,
+      "cumulative-layout-shift": 0,
+      "total-blocking-time": 46
+    },
+    "physical_devices_tested": false,
+    "live_deployment_verified": false
   }
 }
