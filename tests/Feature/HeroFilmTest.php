@@ -11,17 +11,17 @@ class HeroFilmTest extends CatalogueTestCase
     public function test_committed_frames_are_complete_with_correct_dimensions_and_within_budgets(): void
     {
         $manifest = json_decode(file_get_contents(public_path('static/hero-film/manifest.json')), true, 512, JSON_THROW_ON_ERROR);
-        $this->assertCount(7, $manifest['chapters']);
+        $this->assertCount(1, $manifest['chapters']);
         $this->assertSame(4, $manifest['overlap']);
         $this->assertSame(0, $manifest['chapters'][0]['start']);
-        $this->assertSame($manifest['count'] - 1, $manifest['chapters'][6]['end']);
+        $this->assertSame($manifest['count'] - 1, $manifest['chapters'][0]['end']);
         foreach ($manifest['chapters'] as $i => $chapter) {
             if ($i > 0) {
                 $this->assertSame($manifest['chapters'][$i - 1]['end'] + 1, $chapter['start']);
                 $this->assertSame(2, $chapter['start'] - $chapter['transitionStart']);
             }
         }
-        foreach (['desktop' => [720, 1280, 5000000], 'mobile' => [540, 960, 3000000]] as $name => [$w, $h, $budget]) {
+        foreach (['desktop' => [1280, 720, 5000000], 'mobile' => [960, 540, 3000000]] as $name => [$w, $h, $budget]) {
             $variant = $manifest[$name];
             $bytes = 0;
             for ($i = 0; $i < $manifest['count']; $i++) {
@@ -37,7 +37,9 @@ class HeroFilmTest extends CatalogueTestCase
         $this->assertLessThanOrEqual(60000, filesize(public_path(ltrim($manifest['poster'], '/'))));
         $scenes = json_decode(file_get_contents(resource_path('hero-source/scenes.json')), true);
         foreach ($scenes['scenes'] as $scene) {
-            $this->assertTrue($scene['end'] <= 9.4 || $scene['start'] >= 11.3);
+            $this->assertSame('mercedes-landscape.mp4', $scene['file']);
+            $this->assertSame(0, $scene['start']);
+            $this->assertSame(10, $scene['end']);
         }
     }
 
@@ -61,7 +63,7 @@ class HeroFilmTest extends CatalogueTestCase
         $site->enable_hero_video = false;
         $context = Hero::context($site);
         $this->assertNull($context['sequence']);
-        $this->assertCount(7, $context['chapters']);
+        $this->assertCount(1, $context['chapters']);
         $this->assertFileExists(public_path(ltrim($context['poster'], '/')));
     }
 }

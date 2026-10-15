@@ -25,6 +25,13 @@ class BuildHeroFrames extends Command
         if ($fps < 8 || $fps > 10 || $overlap !== 4 || empty($manifest['scenes'])) {
             throw new RuntimeException('Expected 8-10 fps, four overlap frames and at least one scene.');
         }
+        $frameWidth = (int) ($manifest['width'] ?? 720);
+        $frameHeight = (int) ($manifest['height'] ?? 1280);
+        $mobileWidth = (int) ($manifest['mobile_width'] ?? 540);
+        if ($frameWidth < 2 || $frameHeight < 2 || $frameWidth > 4096 || $frameHeight > 4096 || $mobileWidth < 2 || $mobileWidth > $frameWidth || $frameWidth % 2 || $frameHeight % 2 || $mobileWidth % 2) {
+            throw new RuntimeException('Frame dimensions must be even, positive and no larger than 4096.');
+        }
+        $mobileHeight = max(2, (int) round($mobileWidth * $frameHeight / $frameWidth / 2) * 2);
         $sources = [];
         foreach ($manifest['scenes'] as $scene) {
             $source = realpath(dirname($path).'/'.$scene['file']);
@@ -55,7 +62,7 @@ class BuildHeroFrames extends Command
                 if ($scene['daylight'] ?? false) {
                     $filters[] = 'eq=brightness=-0.035:saturation=0.92,colorbalance=bs=0.015:rs=-0.01';
                 }
-                $filters[] = 'scale=720:1280:flags=lanczos,setsar=1';
+                $filters[] = "scale={$frameWidth}:{$frameHeight}:force_original_aspect_ratio=decrease:flags=lanczos,pad={$frameWidth}:{$frameHeight}:(ow-iw)/2:(oh-ih)/2,setsar=1";
                 if ($this->option('preview')) {
                     $this->runFfmpeg(['-ss', (string) $scene['start'], '-i', $sources[$number], '-an', '-vf', implode(',', $filters), '-ss', (string) ($duration / 2), '-frames:v', '1', $directory.'/0000.png']);
                     $previews[] = $directory.'/0000.png';
@@ -80,7 +87,7 @@ class BuildHeroFrames extends Command
                     if ($number && $index < $overlap) {
                         $previous = imagecreatefrompng($target);
                         $incoming = imagecreatefrompng($frame);
-                        imagecopymerge($previous, $incoming, 0, 0, 0, 0, 720, 1280, (int) round(100 * ($index + 1) / ($overlap + 1)));
+                        imagecopymerge($previous, $incoming, 0, 0, 0, 0, $frameWidth, $frameHeight, (int) round(100 * ($index + 1) / ($overlap + 1)));
                         imagepng($previous, $target);
                         imagedestroy($previous);
                         imagedestroy($incoming);
@@ -92,13 +99,14 @@ class BuildHeroFrames extends Command
                 $this->line('Scene '.($number + 1).': '.count($frames).' frames');
             }
             if ($this->option('preview')) {
-                $sheet = imagecreatetruecolor(count($previews) * 180, 356);
+                $previewHeight = (int) round(180 * $frameHeight / $frameWidth);
+                $sheet = imagecreatetruecolor(count($previews) * 180, $previewHeight + 36);
                 $ink = imagecolorallocate($sheet, 240, 240, 232);
                 foreach ($previews as $number => $path) {
                     $frame = imagecreatefrompng($path);
-                    imagecopyresampled($sheet, $frame, $number * 180, 0, 0, 0, 180, 320, 720, 1280);
+                    imagecopyresampled($sheet, $frame, $number * 180, 0, 0, 0, 180, $previewHeight, $frameWidth, $frameHeight);
                     $scene = $manifest['scenes'][$number];
-                    imagestring($sheet, 3, $number * 180 + 6, 329, ($number + 1).': '.$scene['start'].' - '.$scene['end'].'s', $ink);
+                    imagestring($sheet, 3, $number * 180 + 6, $previewHeight + 9, ($number + 1).': '.$scene['start'].' - '.$scene['end'].'s', $ink);
                     imagedestroy($frame);
                 }
                 File::ensureDirectoryExists(base_path('reports/hero-film'));
@@ -108,7 +116,7 @@ class BuildHeroFrames extends Command
 
                 return self::SUCCESS;
             }
-            $result = ['version' => 1, 'fps' => $fps, 'overlap' => $overlap, 'count' => $count, 'chapters' => $chapters];
+            $result = ['version' => 1, 'fps' => $fps, 'overlap' => $overlap, 'count' => $count, 'scroll_screens' => max(1, (int) ($manifest['scroll_screens'] ?? count($chapters))), 'chapters' => $chapters];
             foreach ($result['chapters'] as $i => &$chapter) {
                 $chapter['end'] = ($chapters[$i + 1]['start'] ?? $count) - 1;
             }
@@ -116,10 +124,11 @@ class BuildHeroFrames extends Command
             $revision = substr(hash('sha256', file_get_contents(base_path($this->option('manifest'))).implode('', array_map(fn (string $file): string => hash_file('sha256', $file), $sources)).hash_file('sha256', __FILE__)), 0, 12);
             $url = '/static/hero-film/'.$revision;
             $destination = public_path(ltrim($url, '/'));
-            foreach (['desktop' => [720, 1280, 5000000], 'mobile' => [540, 960, 3000000]] as $name => [$width, $height, $budget]) {
+            foreach (['desktop' => [$frameWidth, $frameHeight, 5000000], 'mobile' => [$mobileWidth, $mobileHeight, 3000000]] as $name => [$width, $height, $budget]) {
                 File::ensureDirectoryExists($work.'/'.$name);
                 for ($quality = $name === 'desktop' ? 85 : 75; $quality >= 45; $quality -= 5) {
                     $this->runFfmpeg(['-framerate', (string) $fps, '-i', $work.'/sequence/%04d.png', '-an', '-vf', "scale={$width}:{$height}:flags=lanczos", '-c:v', 'libwebp', '-quality', (string) $quality, '-compression_level', '6', '-start_number', '0', $work.'/'.$name.'/%04d.webp']);
+                    clearstatcache();
                     $bytes = array_sum(array_map('filesize', glob($work.'/'.$name.'/*.webp')));
                     if ($bytes <= $budget) {
                         break;

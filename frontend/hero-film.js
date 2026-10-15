@@ -84,13 +84,13 @@ export function initHeroFilm(root) {
     pump();wake();
   }
   function draw(image,index){
-    const fit=innerWidth<768?Math.max:Math.min;
+    const fit=innerWidth<768&&!root.classList.contains('hero-film--landscape')?Math.max:Math.min;
     const scale=fit(canvas.width/image.width,canvas.height/image.height);
     context.imageSmoothingQuality='high';
     context.clearRect(0,0,canvas.width,canvas.height);
     const width=image.width*scale,height=image.height*scale;
     context.drawImage(image,(canvas.width-width)/2,(canvas.height-height)/2,width,height);
-    back.drawImage(image,0,0,64,114);
+    back.drawImage(image,0,0,background.width,background.height);
     root.dataset.rendered='true';root.dataset.frame=String(index);
     painted=index;dirty=false;
     const next=chapterAt(index);

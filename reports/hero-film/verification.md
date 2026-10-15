@@ -1,3 +1,19 @@
+# Current source: user-supplied landscape video — 2026-10-15
+
+The active source is `resources/hero-source/mercedes-landscape.mp4`, copied unchanged from the supplied `gemini_generated_video_7033b3f3.mp4` (1280×720, 24 fps, 10.01 seconds). The source's existing montage is preserved as one 0–10 s sequence with a 0.5 s closing fade. No legacy plate masks, portrait crops, extra scene rearrangement or daylight grade are applied to this replacement. Website playback remains scroll-driven, silent, with 100 sampled frames and four viewports of scrolling. There are no visible chapter captions or single-chapter dots.
+
+Desktop frames: 1280×720, quality 85, 3,667,200 bytes. Mobile frames: 960×540, quality 75, 1,824,442 bytes. Poster: 49,228 bytes. The builder now accepts `width`, `height`, `mobile_width`, and `scroll_screens` in scenes.json; it preserves source aspect ratio. The old vertical source/settings remain in `mercedes-brabus.mp4` and `scenes-vertical.json` for rollback; its obsolete public frame revision is removed.
+
+Desktop retains 40 px gutters and shows the complete source frame. Above 1100 px copy overlays a left gradient; at 768–1100 px copy and picture stack. Mobile shows the complete landscape frame above the copy, rather than cropping it to portrait. Close-ups already cropped inside the supplied video remain as supplied.
+
+Validation: 11 PHP feature tests / 1068 assertions; desktop drawing bounds at 768, 882, 1366, 1440 and 1920 px; Chrome scroll checks at 360/768/1440; WebKit and Firefox at 390×844; no-JS, reduced motion, failed frames and absent createImageBitmap. Zero sequence requests before scrolling; 99 distinct frames and no long tasks during the warmed scroll test. Current screenshots, browser JSON and Lighthouse reports have been refreshed.
+
+Current local mobile Lighthouse: performance 96/100, accessibility 100/100, best practices 100/100, LCP 2.3 s, CLS 0. Physical devices and production hosting were not measured. Earlier fullscreen-*.png images below are retained as historical comparison only.
+
+Regenerate with the same `hero:build-frames --ffmpeg=/path/to/ffmpeg --preview` and `hero:build-frames --ffmpeg=/path/to/ffmpeg` commands, then `npm run build`. No database migrations are needed.
+
+## Previous implementation notes (superseded where they conflict with the above)
+
 # Current desktop layout correction — 2026-10-15
 
 The latest user review supersedes the fullscreen alternatives described below. Desktop now has 40 px outer gutters; the complete source frame fits below the header beside the copy. Canvas uses contain on desktop, mobile retains cover. Chapter captions and their numbers were removed from the visible HTML. Both old review hashes open this corrected layout.

@@ -32,9 +32,9 @@ class HeroPreviewTest extends CatalogueTestCase
     {
         $site = new SiteSettings(['enable_hero_video' => true]);
         $hero = Hero::context($site);
-        $this->assertSame(720, $hero['sequence']['desktop']['width']);
-        $this->assertSame(540, $hero['sequence']['mobile']['width']);
-        $this->assertCount(7, $hero['chapters']);
+        $this->assertSame(1280, $hero['sequence']['desktop']['width']);
+        $this->assertSame(960, $hero['sequence']['mobile']['width']);
+        $this->assertCount(1, $hero['chapters']);
         $site->enable_hero_video = false;
         $this->assertNull(Hero::context($site)['sequence']);
         $this->assertSame($hero['poster'], Hero::context($site)['poster']);

@@ -18,7 +18,7 @@ with sync_playwright() as p:
   copy=page.locator('.hero-film__copy').bounding_box()
   assert picture['y']>=header['y']+header['height'],(picture,header)
   assert picture['y']+picture['height']<=height,(picture,height)
-  assert copy['x']+copy['width']<=picture['x'],(copy,picture)
+  if width<=1100:assert copy['y']+copy['height']<=picture['y'],(copy,picture)
   assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
   assert page.locator('.hero-film__book').is_visible()
   for phase in [0.01,0.48,0.99]:
@@ -32,7 +32,7 @@ with sync_playwright() as p:
    if phase==0.01:page.screenshot(path=str(out/f'desktop-fit-{width}.png'))
   page.locator('.hero-film__book').focus();page.keyboard.press('Enter');page.wait_for_timeout(600)
   assert page.url.endswith('#fleet')
-  records.append({'width':width,'height':height,'gutters':40,'whole_frame_visible':True,'copy_clear_of_frame':True,'captions_removed':True,'keyboard_booking':True})
+  records.append({'width':width,'height':height,'gutters':40,'whole_frame_visible':True,'layout':'stacked' if width<=1100 else 'wide overlay','captions_removed':True,'keyboard_booking':True})
   page.close()
  b.close()
 (out/'desktop-fit.json').write_text(json.dumps(records,indent=2),encoding='utf-8')

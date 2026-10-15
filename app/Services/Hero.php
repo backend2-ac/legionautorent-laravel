@@ -12,6 +12,9 @@ class Hero
 
         return [
             'poster' => $manifest['poster'],
+            'width' => $manifest['desktop']['width'],
+            'height' => $manifest['desktop']['height'],
+            'scroll_screens' => $manifest['scroll_screens'] ?? count($manifest['chapters']),
             'sequence' => $site->enable_hero_video ? $manifest : null,
             'chapters' => $manifest['chapters'],
             'alt' => site_text('Mercedes-Brabus: экстерьер и детали'),

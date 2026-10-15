@@ -55,13 +55,13 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
     {
         $manifest = json_decode(file_get_contents(public_path('static/hero-film/manifest.json')), true, 512, JSON_THROW_ON_ERROR);
         $desktop = $manifest['desktop'];
-        $this->assertSame([720, 1280], [$desktop['width'], $desktop['height']]);
+        $this->assertSame([1280, 720], [$desktop['width'], $desktop['height']]);
         $bytes = 0;
         for ($index = 0; $index < $manifest['count']; $index++) {
             $path = public_path(ltrim($desktop['base'], '/').sprintf('%04d.webp', $index));
             $payload = file_get_contents($path);
             $image = getimagesizefromstring($payload);
-            $this->assertSame([720, 1280, 'image/webp'], [$image[0], $image[1], $image['mime']]);
+            $this->assertSame([1280, 720, 'image/webp'], [$image[0], $image[1], $image['mime']]);
             $bytes += strlen($payload);
         }
         $this->assertCount($manifest['count'], glob(public_path(ltrim($desktop['base'], '/')).'*.webp'));

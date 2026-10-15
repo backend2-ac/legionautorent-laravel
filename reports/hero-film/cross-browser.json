@@ -1,15 +1,15 @@
 [
   {
     "browser": "webkit",
-    "middle_frame": "66",
-    "end_frame": 121,
+    "middle_frame": "60",
+    "end_frame": 99,
     "reduced_motion": true,
     "errors": []
   },
   {
     "browser": "firefox",
-    "middle_frame": "66",
-    "end_frame": 121,
+    "middle_frame": "60",
+    "end_frame": 99,
     "reduced_motion": true,
     "errors": []
   }

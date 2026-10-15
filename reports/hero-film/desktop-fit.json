@@ -4,7 +4,7 @@
     "height": 800,
     "gutters": 40,
     "whole_frame_visible": true,
-    "copy_clear_of_frame": true,
+    "layout": "stacked",
     "captions_removed": true,
     "keyboard_booking": true
   },
@@ -13,7 +13,7 @@
     "height": 804,
     "gutters": 40,
     "whole_frame_visible": true,
-    "copy_clear_of_frame": true,
+    "layout": "stacked",
     "captions_removed": true,
     "keyboard_booking": true
   },
@@ -22,7 +22,7 @@
     "height": 900,
     "gutters": 40,
     "whole_frame_visible": true,
-    "copy_clear_of_frame": true,
+    "layout": "wide overlay",
     "captions_removed": true,
     "keyboard_booking": true
   },
@@ -31,7 +31,7 @@
     "height": 1080,
     "gutters": 40,
     "whole_frame_visible": true,
-    "copy_clear_of_frame": true,
+    "layout": "wide overlay",
     "captions_removed": true,
     "keyboard_booking": true
   },
@@ -40,7 +40,7 @@
     "height": 600,
     "gutters": 40,
     "whole_frame_visible": true,
-    "copy_clear_of_frame": true,
+    "layout": "wide overlay",
     "captions_removed": true,
     "keyboard_booking": true
   }

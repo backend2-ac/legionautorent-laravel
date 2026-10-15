@@ -2,64 +2,29 @@
     "version": 1,
     "fps": 10,
     "overlap": 4,
-    "count": 122,
+    "count": 100,
+    "scroll_screens": 4,
     "chapters": [
         {
-            "caption": "Экстерьер",
+            "caption": "Mercedes-Brabus: экстерьер и детали",
             "start": 0,
             "transitionStart": 0,
-            "end": 20
-        },
-        {
-            "caption": "Решётка и фары",
-            "start": 21,
-            "transitionStart": 19,
-            "end": 37
-        },
-        {
-            "caption": "Колёса",
-            "start": 38,
-            "transitionStart": 36,
-            "end": 43
-        },
-        {
-            "caption": "Свет",
-            "start": 44,
-            "transitionStart": 42,
-            "end": 60
-        },
-        {
-            "caption": "Салон",
-            "start": 61,
-            "transitionStart": 59,
-            "end": 77
-        },
-        {
-            "caption": "Ночная дорога",
-            "start": 78,
-            "transitionStart": 76,
-            "end": 98
-        },
-        {
-            "caption": "Продолжение — за вами",
-            "start": 99,
-            "transitionStart": 97,
-            "end": 121
+            "end": 99
         }
     ],
     "desktop": {
-        "width": 720,
-        "height": 1280,
-        "bytes": 4412532,
-        "quality": 80,
-        "base": "/static/hero-film/e0b7a8d7287a/desktop/"
+        "width": 1280,
+        "height": 720,
+        "bytes": 3667200,
+        "quality": 85,
+        "base": "/static/hero-film/56f7b02cf452/desktop/"
     },
     "mobile": {
-        "width": 540,
-        "height": 960,
-        "bytes": 2467636,
+        "width": 960,
+        "height": 540,
+        "bytes": 1824442,
         "quality": 75,
-        "base": "/static/hero-film/e0b7a8d7287a/mobile/"
+        "base": "/static/hero-film/56f7b02cf452/mobile/"
     },
-    "poster": "/static/hero-film/e0b7a8d7287a/poster.webp"
+    "poster": "/static/hero-film/56f7b02cf452/poster.webp"
 }

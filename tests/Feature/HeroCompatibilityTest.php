@@ -35,7 +35,7 @@ class HeroCompatibilityTest extends CatalogueTestCase
         $manifest = json_decode(file_get_contents(public_path('static/hero-film/manifest.json')), true);
         $this->assertSame($manifest, $hero['sequence']);
         $this->assertSame($manifest['poster'], $hero['poster']);
-        $this->assertSame([540, 960], array_slice(getimagesize(public_path(ltrim($hero['poster'], '/'))), 0, 2));
+        $this->assertSame([1280, 720], array_slice(getimagesize(public_path(ltrim($hero['poster'], '/'))), 0, 2));
         $this->get('/')->assertOk()->assertSee('type="image/webp"', false)->assertSee($hero['poster'], false)->assertSee('fetchpriority="high"', false)->assertDontSee('<video', false);
     }
 }

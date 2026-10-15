@@ -1,12 +1,12 @@
 {
   "frontend/hero-film.js": {
-    "file": "assets/hero-film-BCVf_t3F.js",
+    "file": "assets/hero-film-DXBrGb7K.js",
     "name": "hero-film",
     "src": "frontend/hero-film.js",
     "isDynamicEntry": true
   },
   "frontend/main.js": {
-    "file": "assets/main-DhQrNXq0.js",
+    "file": "assets/main-D8rSAQ71.js",
     "name": "main",
     "src": "frontend/main.js",
     "isEntry": true,
@@ -14,7 +14,7 @@
       "frontend/hero-film.js"
     ],
     "css": [
-      "assets/main-BWDPn9Qa.css"
+      "assets/main-BXScsrRa.css"
     ]
   }
 }

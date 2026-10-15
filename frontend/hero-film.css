@@ -64,3 +64,25 @@
  .hero-film__copy h1{font-size:clamp(20px,3vw,28px)}
  .hero-film__book{margin-top:20px}
 }
+
+/* Landscape sources retain their full frame instead of being forced into portrait. */
+@media(min-width:1101px){
+ .hero-film--landscape .hero-film__picture{inset:0;width:100%}
+ .hero-film--landscape .hero-film__copy{width:29%;max-width:400px}
+ .hero-film--landscape .hero-film__picture:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#10100fe6,transparent 45%)}
+}
+@media(min-width:768px) and (max-width:1100px){
+ .hero-film--landscape .hero-film__layout{display:flex;flex-direction:column;gap:20px;padding:0 24px}
+ .hero-film--landscape .hero-film__copy{position:relative;inset:auto;transform:none;width:100%;max-width:none}
+ .hero-film--landscape .hero-film__city{margin-bottom:10px}
+ .hero-film--landscape .hero-film__copy h1{font-size:clamp(22px,2.8vw,30px)}
+ .hero-film--landscape .hero-film__book{margin-top:16px;min-height:44px;padding:12px 20px}
+ .hero-film--landscape .hero-film__hint{display:none}
+ .hero-film--landscape .hero-film__picture{position:relative;inset:auto;width:100%;height:auto;flex:1;min-height:0}
+}
+@media(max-width:767px){
+ .hero-film--landscape .hero-film__background{display:block;opacity:.35}
+ .hero-film--landscape .hero-film__picture{inset:88px 16px auto;width:calc(100% - 32px);height:calc((100vw - 32px)*.5625);max-height:calc(100% - 380px)}
+ .hero-film--landscape .hero-film__picture img{object-fit:contain}
+ .hero-film--landscape .hero-film__picture:after{display:none}
+}
