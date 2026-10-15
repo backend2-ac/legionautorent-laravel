@@ -1,30 +1,20 @@
 {
+  "frontend/hero-film.js": {
+    "file": "assets/hero-film-Dft7wfF4.js",
+    "name": "hero-film",
+    "src": "frontend/hero-film.js",
+    "isDynamicEntry": true
+  },
   "frontend/main.js": {
-    "file": "assets/main-oPopGisH.js",
+    "file": "assets/main-C0pK-Ls8.js",
     "name": "main",
     "src": "frontend/main.js",
     "isEntry": true,
     "dynamicImports": [
-      "frontend/mercedes-preview.js"
+      "frontend/hero-film.js"
     ],
     "css": [
-      "assets/main-Bvr3drPP.css"
-    ],
-    "assets": [
-      "assets/grain-Blhu7toF.webp"
+      "assets/main-Bjkueiwm.css"
     ]
-  },
-  "frontend/mercedes-preview.js": {
-    "file": "assets/mercedes-preview-D8-ApDGV.js",
-    "name": "mercedes-preview",
-    "src": "frontend/mercedes-preview.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "frontend/main.js"
-    ]
-  },
-  "public/static/hero/grain.webp": {
-    "file": "assets/grain-Blhu7toF.webp",
-    "src": "public/static/hero/grain.webp"
   }
 }

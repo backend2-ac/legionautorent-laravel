@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "contain",
+    "canvas_width": 1440,
+    "keyboard_booking": true
+  },
+  {
+    "mode": "cover",
+    "canvas_width": 1440,
+    "keyboard_booking": true
+  }
+]

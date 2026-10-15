@@ -13,7 +13,7 @@ export function initAmbientMotion(){
   // Reserve final number widths; only decorative digit strips move. The real
   // price and units remain intact in the server HTML and accessible name.
   const rollers=[];
-  document.querySelectorAll('.car-price-row strong,.mercedes-facts strong').forEach(el=>{
+  document.querySelectorAll('.car-price-row strong').forEach(el=>{
     const original=el.textContent,match=original.match(/^([\d\s]+)(.*)$/u);
     if(!match)return;
     const visual=document.createElement('span');visual.className='number-visual';visual.setAttribute('aria-hidden','true');
@@ -66,6 +66,4 @@ export function initAmbientMotion(){
   listenMedia(reduced,()=>{animations.forEach(a=>a.cancel());schedule();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelFrame(frame);frame=0;}else schedule();});
   window.addEventListener('pagehide',()=>{animations.forEach(a=>a.cancel());cancelFrame(frame);frame=0;});
-  const h1=document.querySelector('.mercedes-captions h1');
-  if(h1&&!reduced.matches){const line=document.createElement('span');line.className='headline-mask-line';while(h1.firstChild)line.append(h1.firstChild);h1.append(line);h1.classList.add('headline-mask');animate(line,[{opacity:.6,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:650,easing:'cubic-bezier(.2,.65,.3,1)'});}
 }

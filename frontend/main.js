@@ -1,6 +1,6 @@
 import './site.css';
 import './night-garage.css';
-import './mercedes-preview.css';
+import './hero-film.css';
 import './refinements.css';
 import {initPageMotion} from './page-motion.js';
 import {initGarageUI} from './night-garage.js';
@@ -47,7 +47,7 @@ const startPageMotion=()=>{
     if('requestIdleCallback'in window)requestIdleCallback(initPageMotion,{timeout:500});
     else setTimeout(initPageMotion,0);
   };
-  const hero=document.querySelector('[data-mercedes-preview][data-mode=cinematic]'),fleet=document.getElementById('fleet');
+  const hero=document.querySelector('[data-hero-film][data-motion=true]'),fleet=document.getElementById('fleet');
   if(hero&&fleet&&typeof window.IntersectionObserver==='function'){
     const nearby=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)){nearby.disconnect();start();}
@@ -173,8 +173,8 @@ if(filters&&window.fetch){
   window.addEventListener('popstate',()=>location.reload());
 }
 
-const mercedesPreview=$('[data-mercedes-preview]');
-if(mercedesPreview)import('./mercedes-preview.js').then(({initMercedesPreview})=>initMercedesPreview(mercedesPreview)).catch(()=>{if(mercedesPreview.heroFallback)mercedesPreview.heroFallback('script-load');else{mercedesPreview.dataset.state='fallback';mercedesPreview.dataset.mode='static';}});
+const film=$('[data-hero-film]');
+if(film)import('./hero-film.js').then(({initHeroFilm})=>initHeroFilm(film)).catch(()=>{film.dataset.motion='false';});
 // Defer analytics until LCP has had time to paint; retain all editable legacy IDs.
 const analytics=$('[data-analytics]');
 if(analytics){

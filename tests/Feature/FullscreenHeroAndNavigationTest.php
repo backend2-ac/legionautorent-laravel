@@ -51,37 +51,26 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
         }
     }
 
-    public function test_fullhd_preserves_the_orbit_at_native_resolution_with_valid_packs(): void
+    public function test_chapter_film_has_correct_full_resolution_assets(): void
     {
-        $manifest = json_decode(file_get_contents(public_path('static/hero/sequence.json')), true, 512, JSON_THROW_ON_ERROR);
-        $fullhd = $manifest['fullhd'];
-        $this->assertSame([1920, 1080], [$fullhd['width'], $fullhd['height']]);
-        $frames = $bytes = 0;
-        foreach ($fullhd['packs'] as $pack) {
-            $payload = file_get_contents(public_path(ltrim($pack['url'], '/')));
-            $this->assertSame($pack['sha256'], hash('sha256', $payload));
-            $this->assertSame($pack['bytes'], strlen($payload));
+        $manifest = json_decode(file_get_contents(public_path('static/hero-film/manifest.json')), true, 512, JSON_THROW_ON_ERROR);
+        $desktop = $manifest['desktop'];
+        $this->assertSame([720, 1280], [$desktop['width'], $desktop['height']]);
+        $bytes = 0;
+        for ($index = 0; $index < $manifest['count']; $index++) {
+            $path = public_path(ltrim($desktop['base'], '/').sprintf('%04d.webp', $index));
+            $payload = file_get_contents($path);
+            $image = getimagesizefromstring($payload);
+            $this->assertSame([720, 1280, 'image/webp'], [$image[0], $image[1], $image['mime']]);
             $bytes += strlen($payload);
-            $offset = $count = 0;
-            while ($offset < strlen($payload)) {
-                $size = unpack('Vsize', substr($payload, $offset, 4))['size'];
-                $offset += 4;
-                $image = getimagesizefromstring(substr($payload, $offset, $size));
-                $this->assertSame([1920, 1080, 'image/webp'], [$image[0], $image[1], $image['mime']]);
-                $offset += $size;
-                $count++;
-            }
-            $this->assertSame($pack['count'], $count);
-            $this->assertSame(strlen($payload), $offset);
-            $frames += $count;
         }
-        $this->assertSame($manifest['count'], $frames);
-        $this->assertSame($fullhd['bytes'], $bytes);
+        $this->assertCount($manifest['count'], glob(public_path(ltrim($desktop['base'], '/')).'*.webp'));
+        $this->assertSame($desktop['bytes'], $bytes);
         $site = SiteSettings::first();
         $site->enable_hero_video = true;
         $hero = Hero::context($site);
-        $this->assertSame(1920, $hero['sequence']['fullhd']['width']);
-        $this->assertSame($fullhd['poster'], $hero['poster']);
-        $this->get('/')->assertOk()->assertSee($fullhd['poster'], false)->assertSee('fetchpriority="high"', false);
+        $this->assertSame($manifest, $hero['sequence']);
+        $this->assertSame($manifest['poster'], $hero['poster']);
+        $this->get('/')->assertOk()->assertSee($hero['poster'], false)->assertSee('fetchpriority="high"', false);
     }
 }

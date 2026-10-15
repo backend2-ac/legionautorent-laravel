@@ -1,0 +1,85 @@
+{
+  "fps": 10,
+  "overlap": 4,
+  "translation_review": "Kazakh chapter captions must be reviewed by a native speaker before release.",
+  "scenes": [
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 0,
+      "end": 2.36,
+      "caption": "Экстерьер",
+      "daylight": true,
+      "masks": [
+        [
+          "288-12*t",
+          "836+12*t",
+          "114+22*t",
+          12
+        ]
+      ]
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 2.4,
+      "end": 4.56,
+      "caption": "Решётка и фары",
+      "daylight": true,
+      "crop": [
+        540,
+        960,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 8.32,
+      "end": 9.36,
+      "caption": "Колёса",
+      "daylight": true
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 11.32,
+      "end": 13.44,
+      "caption": "Свет",
+      "daylight": true
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 15,
+      "end": 17.16,
+      "caption": "Салон",
+      "daylight": true
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 27.5,
+      "end": 30,
+      "caption": "Ночная дорога",
+      "masks": [
+        [
+          "280+50*t",
+          "730+13*t",
+          "180+10*t",
+          28
+        ]
+      ]
+    },
+    {
+      "file": "mercedes-brabus.mp4",
+      "start": 31.1,
+      "end": 33.6,
+      "caption": "Продолжение — за вами",
+      "fade_out": 0.65,
+      "masks": [
+        [
+          "520-145*t",
+          670,
+          "115-25*t",
+          35
+        ]
+      ]
+    }
+  ]
+}

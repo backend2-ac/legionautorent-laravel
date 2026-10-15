@@ -20,9 +20,6 @@
 @media(max-width:767px){.garage-ending{min-height:360px}.garage-ending>img{object-fit:cover;opacity:.23}.garage-ending .garage-statement{max-width:280px}.class-marquee-track{animation:none}}
 @media(prefers-reduced-motion:reduce){.class-marquee-track{animation:none}.garage-ending>img{transform:none!important}}
 
-.mercedes-facts strong .number-visual,.mercedes-facts strong .number-visual span{color:inherit;gap:0}
-.mercedes-facts strong .number-visual>span{display:inline-block}
-.mercedes-facts strong .number-strip{display:block}
 .headline-mask{overflow:clip}.headline-mask-line{display:block}
 .class-marquee-track{animation-play-state:paused}.class-marquee[data-visible=true] .class-marquee-track{animation-play-state:running}
 .class-marquee:hover .class-marquee-track,.class-marquee:focus-within .class-marquee-track{animation-play-state:paused}

@@ -18,3 +18,5 @@ CLAUDE.md
 .ai
 .agents
 *.log
+
+resources/hero-source/*.mp4

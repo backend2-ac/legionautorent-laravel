@@ -1,0 +1,168 @@
+[
+  {
+    "browser": "Chrome",
+    "width": 360,
+    "phases": [
+      {
+        "progress": 0.16,
+        "frame": "23",
+        "caption": "02 Решётка и фары"
+      },
+      {
+        "progress": 0.31,
+        "frame": "39",
+        "caption": "03 Колёса"
+      },
+      {
+        "progress": 0.46,
+        "frame": "48",
+        "caption": "04 Свет"
+      },
+      {
+        "progress": 0.61,
+        "frame": "66",
+        "caption": "05 Салон"
+      },
+      {
+        "progress": 0.76,
+        "frame": "85",
+        "caption": "06 Ночная дорога"
+      },
+      {
+        "progress": 0.93,
+        "frame": "110",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 1,
+        "frame": "121",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 0,
+        "frame": "0",
+        "caption": "01 Экстерьер"
+      }
+    ],
+    "initial_frame_requests": 0,
+    "scroll_frame_changes": 120,
+    "scroll_long_tasks": [],
+    "errors": []
+  },
+  {
+    "browser": "Chrome",
+    "width": 768,
+    "phases": [
+      {
+        "progress": 0.16,
+        "frame": "23",
+        "caption": "02 Решётка и фары"
+      },
+      {
+        "progress": 0.31,
+        "frame": "39",
+        "caption": "03 Колёса"
+      },
+      {
+        "progress": 0.46,
+        "frame": "48",
+        "caption": "04 Свет"
+      },
+      {
+        "progress": 0.61,
+        "frame": "66",
+        "caption": "05 Салон"
+      },
+      {
+        "progress": 0.76,
+        "frame": "85",
+        "caption": "06 Ночная дорога"
+      },
+      {
+        "progress": 0.93,
+        "frame": "110",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 1,
+        "frame": "121",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 0,
+        "frame": "0",
+        "caption": "01 Экстерьер"
+      }
+    ],
+    "initial_frame_requests": 0,
+    "scroll_frame_changes": 120,
+    "scroll_long_tasks": [],
+    "errors": []
+  },
+  {
+    "browser": "Chrome",
+    "width": 1440,
+    "phases": [
+      {
+        "progress": 0.16,
+        "frame": "23",
+        "caption": "02 Решётка и фары"
+      },
+      {
+        "progress": 0.31,
+        "frame": "39",
+        "caption": "03 Колёса"
+      },
+      {
+        "progress": 0.46,
+        "frame": "48",
+        "caption": "04 Свет"
+      },
+      {
+        "progress": 0.61,
+        "frame": "66",
+        "caption": "05 Салон"
+      },
+      {
+        "progress": 0.76,
+        "frame": "85",
+        "caption": "06 Ночная дорога"
+      },
+      {
+        "progress": 0.93,
+        "frame": "110",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 1,
+        "frame": "121",
+        "caption": "07 Продолжение — за вами"
+      },
+      {
+        "progress": 0,
+        "frame": "0",
+        "caption": "01 Экстерьер"
+      }
+    ],
+    "initial_frame_requests": 0,
+    "scroll_frame_changes": 120,
+    "scroll_long_tasks": [],
+    "errors": []
+  },
+  {
+    "mode": "reduced-motion",
+    "passed": true
+  },
+  {
+    "mode": "no-js",
+    "passed": true
+  },
+  {
+    "mode": "no-bitmap",
+    "passed": true
+  },
+  {
+    "mode": "failed-frames",
+    "passed": true
+  }
+]

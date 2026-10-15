@@ -1,0 +1,65 @@
+{
+    "version": 1,
+    "fps": 10,
+    "overlap": 4,
+    "count": 122,
+    "chapters": [
+        {
+            "caption": "Экстерьер",
+            "start": 0,
+            "transitionStart": 0,
+            "end": 20
+        },
+        {
+            "caption": "Решётка и фары",
+            "start": 21,
+            "transitionStart": 19,
+            "end": 37
+        },
+        {
+            "caption": "Колёса",
+            "start": 38,
+            "transitionStart": 36,
+            "end": 43
+        },
+        {
+            "caption": "Свет",
+            "start": 44,
+            "transitionStart": 42,
+            "end": 60
+        },
+        {
+            "caption": "Салон",
+            "start": 61,
+            "transitionStart": 59,
+            "end": 77
+        },
+        {
+            "caption": "Ночная дорога",
+            "start": 78,
+            "transitionStart": 76,
+            "end": 98
+        },
+        {
+            "caption": "Продолжение — за вами",
+            "start": 99,
+            "transitionStart": 97,
+            "end": 121
+        }
+    ],
+    "desktop": {
+        "width": 720,
+        "height": 1280,
+        "bytes": 4412532,
+        "quality": 80,
+        "base": "/static/hero-film/e0b7a8d7287a/desktop/"
+    },
+    "mobile": {
+        "width": 540,
+        "height": 960,
+        "bytes": 2467636,
+        "quality": 75,
+        "base": "/static/hero-film/e0b7a8d7287a/mobile/"
+    },
+    "poster": "/static/hero-film/e0b7a8d7287a/poster.webp"
+}

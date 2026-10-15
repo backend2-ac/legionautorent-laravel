@@ -1,0 +1,16 @@
+[
+  {
+    "browser": "webkit",
+    "middle_frame": "66",
+    "end_frame": 121,
+    "reduced_motion": true,
+    "errors": []
+  },
+  {
+    "browser": "firefox",
+    "middle_frame": "66",
+    "end_frame": 121,
+    "reduced_motion": true,
+    "errors": []
+  }
+]
