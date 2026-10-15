@@ -1,3 +1,11 @@
+# Current desktop layout correction — 2026-10-15
+
+The latest user review supersedes the fullscreen alternatives described below. Desktop now has 40 px outer gutters; the complete source frame fits below the header beside the copy. Canvas uses contain on desktop, mobile retains cover. Chapter captions and their numbers were removed from the visible HTML. Both old review hashes open this corrected layout.
+
+Verified full-frame drawing bounds, positive image size, separation from the copy/header, keyboard booking and no horizontal overflow at 768×800, 882×804, 1440×900, 1920×1080 and 1366×600. See desktop-fit.json and desktop-fit-*.png. The hero PHP checks pass (3 tests, 552 assertions). The general browser script was updated for the removal of captions. The Lighthouse and fullscreen-*.png results below are the earlier fullscreen baseline, not fresh measurements of this layout.
+
+## Initial fullscreen implementation and measurements
+
 # Hero film: implementation and verification
 
 Date: 2026-10-15. Branch: `codex/hero-film-chapters`.

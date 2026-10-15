@@ -5,43 +5,35 @@
     "phases": [
       {
         "progress": 0.16,
-        "frame": "23",
-        "caption": "02 Решётка и фары"
+        "frame": "23"
       },
       {
         "progress": 0.31,
-        "frame": "39",
-        "caption": "03 Колёса"
+        "frame": "39"
       },
       {
         "progress": 0.46,
-        "frame": "48",
-        "caption": "04 Свет"
+        "frame": "48"
       },
       {
         "progress": 0.61,
-        "frame": "66",
-        "caption": "05 Салон"
+        "frame": "66"
       },
       {
         "progress": 0.76,
-        "frame": "85",
-        "caption": "06 Ночная дорога"
+        "frame": "85"
       },
       {
         "progress": 0.93,
-        "frame": "110",
-        "caption": "07 Продолжение — за вами"
+        "frame": "110"
       },
       {
         "progress": 1,
-        "frame": "121",
-        "caption": "07 Продолжение — за вами"
+        "frame": "121"
       },
       {
         "progress": 0,
-        "frame": "0",
-        "caption": "01 Экстерьер"
+        "frame": "0"
       }
     ],
     "initial_frame_requests": 0,
@@ -55,43 +47,35 @@
     "phases": [
       {
         "progress": 0.16,
-        "frame": "23",
-        "caption": "02 Решётка и фары"
+        "frame": "23"
       },
       {
         "progress": 0.31,
-        "frame": "39",
-        "caption": "03 Колёса"
+        "frame": "39"
       },
       {
         "progress": 0.46,
-        "frame": "48",
-        "caption": "04 Свет"
+        "frame": "48"
       },
       {
         "progress": 0.61,
-        "frame": "66",
-        "caption": "05 Салон"
+        "frame": "66"
       },
       {
         "progress": 0.76,
-        "frame": "85",
-        "caption": "06 Ночная дорога"
+        "frame": "85"
       },
       {
         "progress": 0.93,
-        "frame": "110",
-        "caption": "07 Продолжение — за вами"
+        "frame": "110"
       },
       {
         "progress": 1,
-        "frame": "121",
-        "caption": "07 Продолжение — за вами"
+        "frame": "121"
       },
       {
         "progress": 0,
-        "frame": "0",
-        "caption": "01 Экстерьер"
+        "frame": "0"
       }
     ],
     "initial_frame_requests": 0,
@@ -105,43 +89,35 @@
     "phases": [
       {
         "progress": 0.16,
-        "frame": "23",
-        "caption": "02 Решётка и фары"
+        "frame": "23"
       },
       {
         "progress": 0.31,
-        "frame": "39",
-        "caption": "03 Колёса"
+        "frame": "39"
       },
       {
         "progress": 0.46,
-        "frame": "48",
-        "caption": "04 Свет"
+        "frame": "48"
       },
       {
         "progress": 0.61,
-        "frame": "66",
-        "caption": "05 Салон"
+        "frame": "66"
       },
       {
         "progress": 0.76,
-        "frame": "85",
-        "caption": "06 Ночная дорога"
+        "frame": "85"
       },
       {
         "progress": 0.93,
-        "frame": "110",
-        "caption": "07 Продолжение — за вами"
+        "frame": "110"
       },
       {
         "progress": 1,
-        "frame": "121",
-        "caption": "07 Продолжение — за вами"
+        "frame": "121"
       },
       {
         "progress": 0,
-        "frame": "0",
-        "caption": "01 Экстерьер"
+        "frame": "0"
       }
     ],
     "initial_frame_requests": 0,

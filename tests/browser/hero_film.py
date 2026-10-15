@@ -23,7 +23,7 @@ with sync_playwright() as p:
   for part in [.16,.31,.46,.61,.76,.93,1,0]:
    root.evaluate('(r,p)=>scrollTo({top:r.offsetTop+(r.offsetHeight-r.querySelector(".hero-film__stage").offsetHeight)*p,behavior:"instant"})',part)
    page.wait_for_timeout(1300)
-   phases.append({'progress':part,'frame':root.get_attribute('data-frame'),'caption':page.locator('[data-film-caption].is-current').inner_text()})
+   phases.append({'progress':part,'frame':root.get_attribute('data-frame')})
    box=page.locator('.hero-film__copy h1').bounding_box();assert abs(before['y']-box['y'])<2,(width,part,before,box)
    if part==.61:page.screenshot(path=str(out/f'chrome-{width}-interior.png'))
   expect(root).to_have_attribute('data-frame','0')

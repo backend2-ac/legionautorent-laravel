@@ -43,13 +43,13 @@ class HeroFilmTest extends CatalogueTestCase
 
     public function test_all_languages_have_static_text_poster_and_booking_without_a_video_element(): void
     {
-        foreach (['' => 'Экстерьер', '/kk' => 'Сыртқы көрініс', '/en' => 'Exterior'] as $prefix => $caption) {
-            $response = $this->get($prefix.'/')->assertOk()->assertSee($caption)->assertSee('fetchpriority="high"', false)->assertSee('data-city-label', false)->assertDontSee('<video', false);
+        foreach (['' => 'Забронировать', '/kk' => 'Брондау', '/en' => 'Book a car'] as $prefix => $booking) {
+            $response = $this->get($prefix.'/')->assertOk()->assertSee($booking)->assertSee('fetchpriority="high"', false)->assertSee('data-city-label', false)->assertDontSee('<video', false);
             $dom = new \DOMDocument;
             @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$response->getContent());
             $xpath = new \DOMXPath($dom);
             $this->assertSame(1, $xpath->query('//h1')->length);
-            $this->assertSame(7, $xpath->query('//*[@data-film-caption]')->length);
+            $this->assertSame(0, $xpath->query('//*[@data-film-caption]')->length);
             $this->assertSame(2, $xpath->query('//section[@data-hero-film]//canvas[@aria-hidden="true"]')->length);
             $this->assertSame('#fleet', $xpath->query('//a[contains(@class,"hero-film__book")]')->item(0)->getAttribute('href'));
         }

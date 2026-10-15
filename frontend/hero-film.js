@@ -8,7 +8,7 @@ export function initHeroFilm(root) {
   if(!context || !back){root.dataset.motion='false';return;}
   // Variant is selected once: resize never downloads a second sequence.
   const variant=manifest[matchMedia('(max-width:767px)').matches?'mobile':'desktop'];
-  const captions=[...root.querySelectorAll('[data-film-caption]')],dots=[...root.querySelectorAll('.hero-film__dots span')];
+  const dots=[...root.querySelectorAll('.hero-film__dots span')];
   const blobs=new Map(),decoded=new Map(),fetching=new Set(),decoding=new Set(),failed=new Map();
   const radius=5,limit=14;
   let loaded=document.readyState==='complete',visible=false,raf=0,current=0,target=0,painted=-1,chapter=-1;
@@ -84,7 +84,7 @@ export function initHeroFilm(root) {
     pump();wake();
   }
   function draw(image,index){
-    const fit=root.dataset.fit==='cover'||innerWidth<768?Math.max:Math.min;
+    const fit=innerWidth<768?Math.max:Math.min;
     const scale=fit(canvas.width/image.width,canvas.height/image.height);
     context.imageSmoothingQuality='high';
     context.clearRect(0,0,canvas.width,canvas.height);
@@ -94,7 +94,7 @@ export function initHeroFilm(root) {
     root.dataset.rendered='true';root.dataset.frame=String(index);
     painted=index;dirty=false;
     const next=chapterAt(index);
-    if(next!==chapter){chapter=next;captions.forEach((item,i)=>item.classList.toggle('is-current',i===chapter));dots.forEach((item,i)=>item.classList.toggle('is-current',i===chapter));}
+    if(next!==chapter){chapter=next;dots.forEach((item,i)=>item.classList.toggle('is-current',i===chapter));}
   }
   function tick(){
     raf=0;if(!enabled())return;
@@ -113,7 +113,7 @@ export function initHeroFilm(root) {
   const pause=()=>{cancelAnimationFrame(raf);raf=0;};
   const motion=()=>{
     root.dataset.motion=String(!reduced.matches);
-    if(reduced.matches){pause();generation++;decoded.forEach(release);decoded.clear();root.dataset.rendered='false';painted=-1;chapter=-1;captions.forEach((el,i)=>el.classList.toggle('is-current',i===0));dots.forEach((el,i)=>el.classList.toggle('is-current',i===0));}
+    if(reduced.matches){pause();generation++;decoded.forEach(release);decoded.clear();root.dataset.rendered='false';painted=-1;chapter=-1;dots.forEach((el,i)=>el.classList.toggle('is-current',i===0));}
     measure();
   };
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible){measure();pump();wake();}else pause();});
@@ -121,7 +121,6 @@ export function initHeroFilm(root) {
   const resize=typeof ResizeObserver==='function'?new ResizeObserver(measure):null;
   resize?.observe(stage);
   window.addEventListener('resize',measure,{passive:true});
-  window.addEventListener('hashchange',()=>{if(['#hero-cover','#hero-contain'].includes(location.hash)){root.dataset.fit=location.hash==='#hero-cover'?'cover':'contain';dirty=true;wake();}});
   window.addEventListener('scroll',update,{passive:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();else update();});
   if(reduced.addEventListener)reduced.addEventListener('change',motion);else reduced.addListener(motion);

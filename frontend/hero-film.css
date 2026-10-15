@@ -1,4 +1,4 @@
-/* One fixed composition: the film and chapter caption answer the scroll. */
+/* Fixed copy beside a scroll-linked film, with the full source frame visible on desktop. */
 .hero-film{--film-vh:1vh;position:relative;background:#10100f;isolation:isolate;color:#f3f1e9}
 @supports(height:100svh){.hero-film{--film-vh:1svh}}
 .hero-film[data-motion=true]{height:calc(var(--film-vh) * 100 * (var(--chapters) + 1))}
@@ -10,11 +10,7 @@
 .hero-film__copy{position:relative;z-index:3;max-width:660px}
 .hero-film__city{margin:0 0 24px;color:var(--yellow);font-size:14px}
 .hero-film__copy h1{font:600 clamp(27px,3.4vw,52px)/1.13 var(--display);letter-spacing:-.035em;text-wrap:balance;margin:0;color:#f3f1e9}
-.hero-film__captions{display:grid;list-style:none;padding:0;margin:36px 0 28px;font:400 clamp(16px,1.5vw,21px)/1.5 var(--text);min-height:3em}
-.hero-film__captions li{grid-area:1/1;opacity:0;transition:opacity .24s;align-self:start}
-.hero-film__captions li.is-current{opacity:1}
-.hero-film__captions span{color:var(--yellow);font-size:12px;display:inline-block;width:32px;vertical-align:middle;font-variant-numeric:tabular-nums}
-.hero-film__book{min-width:230px;justify-content:space-between;gap:32px}
+.hero-film__book{margin-top:32px;min-width:230px;justify-content:space-between;gap:32px}
 .hero-film__book:focus-visible{outline:3px solid #fff;outline-offset:5px}
 .hero-film__hint{font-size:12px;color:#aaa99f;display:flex;gap:20px;margin:32px 0 0;transition:opacity .25s}
 .hero-film[data-scrolled=true] .hero-film__hint,.hero-film:not([data-motion=true]) .hero-film__hint{opacity:0}
@@ -35,7 +31,6 @@
  .hero-film__copy{position:absolute;bottom:calc(90px + env(safe-area-inset-bottom));left:24px;right:36px;z-index:3}
  .hero-film__city{font-size:12px;margin-bottom:14px}
  .hero-film__copy h1{font-size:clamp(23px,6.3vw,37px);line-height:1.13;text-shadow:0 2px 20px #0009}
- .hero-film__captions{font-size:16px;margin:20px 0 18px;min-height:1.5em}
  .hero-film__book{min-height:52px;width:100%;font-size:14px}
  .hero-film__hint{margin:16px 0 0;font-size:11px}
  .hero-film__dots{z-index:4;right:15px;top:40%;gap:14px}
@@ -47,23 +42,25 @@
  .hero-film__layout{padding-top:84px;padding-bottom:16px;gap:24px}
  .hero-film__copy h1{font-size:clamp(18px,3vw,30px)}
  .hero-film__city{margin-bottom:10px}
- .hero-film__captions{margin:12px 0;min-height:1.5em;font-size:14px}
  .hero-film__book{min-height:44px;padding:12px 18px}
  .hero-film__hint{margin-top:10px}
 }
 @media(max-width:767px) and (max-height:600px){.hero-film__copy{bottom:80px}.hero-film__city{display:none}.hero-film__hint{display:none}}
-@media(prefers-reduced-motion:reduce){.hero-film[data-motion=true]{height:auto}.hero-film[data-motion=true] .hero-film__stage{position:relative}.hero-film__captions li,.hero-film__dots span{transition:none}.hero-film__hint{display:none}}
+@media(prefers-reduced-motion:reduce){.hero-film[data-motion=true]{height:auto}.hero-film[data-motion=true] .hero-film__stage{position:relative}.hero-film__dots span{transition:none}.hero-film__hint{display:none}}
 
-/* Two full-screen treatments. Hash links are review controls, not new routes. */
+/* Desktop inset: the source fits below the header, with 40px outer gutters. */
 @media(min-width:768px){
- .hero-film__layout{display:block;width:100%;max-width:none;padding:0;margin:0}
- .hero-film__picture{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;box-shadow:none;background:transparent}
+ .hero-film__stage{margin-inline:40px;min-height:0}
+ .hero-film__layout{display:block;width:100%;max-width:none;padding:0;margin:0;top:104px;height:calc(100% - 128px)}
+ .hero-film__picture{position:absolute;inset:0 auto 0 43%;width:calc(57% - 24px);height:100%;max-width:none;aspect-ratio:auto;box-shadow:none;background:transparent}
  .hero-film__picture img{object-fit:contain}
- .hero-film[data-fit=cover] .hero-film__picture img{object-fit:cover}
  .hero-film__background{opacity:.48}
- .hero-film__copy{position:absolute;left:max(40px,calc((100vw - 1280px)/2));top:50%;transform:translateY(-45%);width:34%;max-width:480px}
+ .hero-film__copy{position:absolute;left:32px;top:50%;transform:translateY(-50%);width:37%;max-width:480px}
  .hero-film__copy h1{font-size:clamp(26px,3.05vw,44px);text-shadow:0 2px 18px #0008}
- .hero-film__picture:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#10100ff2, #10100fb3 28%,transparent 49%,transparent 80%,#10100f66)}
- .hero-film__dots{z-index:4;right:32px}
+ .hero-film__dots{z-index:4;right:8px;transform:translateY(-50%)}
 }
-@media(min-width:768px) and (max-height:600px){.hero-film__copy{top:54%;width:45%;max-width:520px}.hero-film__copy h1{font-size:clamp(20px,3vw,28px)}}
+@media(min-width:768px) and (max-height:600px){
+ .hero-film__layout{top:96px;height:calc(100% - 112px)}
+ .hero-film__copy h1{font-size:clamp(20px,3vw,28px)}
+ .hero-film__book{margin-top:20px}
+}
