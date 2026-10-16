@@ -23,10 +23,11 @@ html{scroll-padding-top:calc(var(--site-header-height) + 24px)}
 }
 @media(max-width:767px){
  :root{--site-header-height:180px}
- .site-header .header-inner{min-height:180px;grid-template-columns:1fr auto;padding-bottom:12px;gap:0 12px}
+ .site-header .header-inner{min-height:180px;grid-template-columns:auto minmax(0,1fr) 44px;padding-bottom:12px;gap:0 8px}
  .site-header .brand{min-height:72px}
  .site-header .header-inner>.language-switch,.site-header .desktop-nav{display:none}
- .site-header .mobile-menu{grid-column:2;grid-row:1;margin:0}
+ .site-header .header-phone{display:flex;grid-column:2;grid-row:1;align-items:center;justify-content:center;min-height:44px;font-size:12px;font-weight:600;color:var(--yellow)}
+ .site-header .mobile-menu{grid-column:3;grid-row:1;margin:0;justify-self:end}
  .city-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
  .city-navigation a{padding:10px 6px;font-size:13px;min-width:0;white-space:normal;overflow-wrap:anywhere}
  .mobile-menu nav{top:72px;z-index:2}
