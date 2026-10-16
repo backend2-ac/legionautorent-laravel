@@ -50,12 +50,12 @@ class SeoController extends Controller
             })->where('robots', 'index,follow')->with('translations')->get();
             if ($section === 'pages') {
                 $catalogPaths = City::where('active', true)->get()->map(fn (City $city) => $city->getCatalogPath());
-                $objects = $objects->reject(fn (Page $page) => $page->path !== '/cars/' && str_starts_with($page->path, '/cars/') && ! $catalogPaths->contains($page->path));
+                $objects = $objects->reject(fn (Page $page) => $page->path === '/cars/' || (str_starts_with($page->path, '/cars/') && ! $catalogPaths->contains($page->path)));
             }
             $entries = $objects->map(fn ($o) => [$o->getAbsoluteUrl(), Seo::languages($o), $o->updated_at?->toAtomString()])->all();
             if ($section === 'pages') {
                 $existing = array_column($entries, 0);
-                foreach (['/cars/' => Seo::catalogLanguages(), '/faq/' => Seo::faqLanguages()] as $path => $languages) {
+                foreach (['/faq/' => Seo::faqLanguages()] as $path => $languages) {
                     if (! in_array($path, $existing)) {
                         $entries[] = [$path, $languages, null];
                     }

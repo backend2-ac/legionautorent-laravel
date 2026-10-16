@@ -48,7 +48,7 @@ class SiteController extends Controller
         }
         $cities = $r->attributes->get('nav_cities') ?? $public['cities'];
         $selected = $r->attributes->get('selected_city') ?? $cities->firstWhere('legacy_path', $r->attributes->get('base_path'));
-        $menu = $public['menu'];
+        $menu = $public['menu']->reject(fn ($item) => rtrim($item->path, '/') === '/cars');
         $alias = (object) ['path' => $r->getPathInfo(), 'selected_city' => $selected, 'main_menu' => $menu->where('area', 'main'), 'mobile_menu' => $menu->where('area', 'mobile'), 'home_sections' => $public['sections'], 'csp_nonce' => $r->attributes->get('nonce')];
         $base = ['request' => $alias, 'site' => $site, 'nav_cities' => $cities, 'nav_categories' => $public['categories'], 'footer_pages' => $public['pages'], 'hero_film' => Hero::context($site), 'is_staging' => config('legion.staging'), 'analytics_enabled' => config('legion.analytics') && ! config('legion.staging'), 'current_language' => app()->getLocale(), 'language_links' => collect(['ru' => 'RU', 'kk' => 'KZ', 'en' => 'EN'])->map(fn ($label, $l) => ['language' => $l, 'label' => $label, 'url' => language_url($r->attributes->get('base_path'), $l)])->values()->all(), 'partner_translated' => app()->getLocale() === 'ru' || $site->translations->contains(fn ($t) => $t->published && $t->language === app()->getLocale()), 'city' => null, 'cars' => collect(), 'category' => null, 'faqs' => collect(), 'breadcrumbs' => [], 'compact' => false, 'callback' => false, 'filter_form' => null, 'form' => null];
         $ctx = array_replace($base, $ctx);
@@ -72,6 +72,13 @@ class SiteController extends Controller
 
                 return new RedirectResponse(language_url($target).($query ? '?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986) : ''), 301);
             }
+        }
+        if ($path === '/cars/') {
+            $city = $r->attributes->get('selected_city') ?? $cities?->firstWhere('legacy_path', '/') ?? $cities?->first();
+            abort_unless($city, 404);
+            $query = $r->except('city', 'page');
+
+            return new RedirectResponse(language_url($city->getCatalogPath()).($query ? '?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986) : ''), 302);
         }
         if (str_starts_with($path, '/kz/')) {
             return $this->missing();

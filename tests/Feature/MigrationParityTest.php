@@ -44,7 +44,7 @@ class MigrationParityTest extends CatalogueTestCase
 
     public function test_all_auxiliary_pages_and_locale_fallbacks_are_usable(): void
     {
-        foreach (['/cars/', '/contacts/', '/privacy/', '/consent/', '/rental-conditions/', '/faq/', '/booking/', '/callback/', '/request-success/', '/kk/', '/en/', '/kk/cars/', '/en/contacts/'] as $path) {
+        foreach (['/cars/astana/', '/contacts/', '/privacy/', '/consent/', '/rental-conditions/', '/faq/', '/booking/', '/callback/', '/request-success/', '/kk/', '/en/', '/kk/cars/astana/', '/en/contacts/'] as $path) {
             $this->get($path)->assertOk();
         }
         $this->get('/kk/')->assertSee('content="noindex,follow"', false)->assertDontSee('hreflang="kk"', false);
@@ -75,7 +75,7 @@ class MigrationParityTest extends CatalogueTestCase
     public function test_city_selection_survives_navigation_without_changing_canonical(): void
     {
         $this->get('/kostanay/')->assertOk();
-        $this->get('/contacts/')->assertSee('data-city-label>Костанай', false);
+        $this->get('/contacts/')->assertSee('data-city-switch="kostanay" href="/cars/kostanay/"  aria-current="location"', false);
         $this->get('/')->assertOk()->assertSee('data-city-home href="/"', false);
         $this->get('/kostanay/')->assertSee('<link rel="canonical" href="https://legionautorent.kz/kostanay/">', false);
     }

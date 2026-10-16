@@ -20,7 +20,7 @@ class CatalogueInteractionTest extends CatalogueTestCase
 
     public function test_invalid_filter_ranges_show_an_error_without_server_failure(): void
     {
-        $this->get('/cars/?min_price=50000&max_price=20000')->assertOk()->assertSee('Проверьте параметры поиска.')->assertDontSee('class="car-card"', false);
+        $this->get('/cars/astana/?min_price=50000&max_price=20000')->assertOk()->assertSee('Проверьте параметры поиска.')->assertDontSee('class="car-card"', false);
     }
 
     public function test_car_children_have_original_cascade_rules(): void
@@ -34,8 +34,8 @@ class CatalogueInteractionTest extends CatalogueTestCase
 
     public function test_catalogue_search_remains_case_insensitive_with_binary_mysql_indexes(): void
     {
-        $lower = $this->get('/cars/?q=toyota')->assertOk()->getContent();
-        $upper = $this->get('/cars/?q=TOYOTA')->assertOk()->getContent();
+        $lower = $this->get('/cars/astana/?q=toyota')->assertOk()->getContent();
+        $upper = $this->get('/cars/astana/?q=TOYOTA')->assertOk()->getContent();
         $count = substr_count($lower, 'class="car-card"');
         $this->assertGreaterThan(0, $count);
         $this->assertSame($count, substr_count($upper, 'class="car-card"'));

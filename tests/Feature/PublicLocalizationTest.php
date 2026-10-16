@@ -31,7 +31,7 @@ class PublicLocalizationTest extends CatalogueTestCase
         $this->publish();
         $this->assertSame('Edited by the administrator', $translation->fresh()->title);
         $this->assertSame(874, Translation::where('published', true)->count());
-        foreach (['/kk/', '/en/', '/kk/contacts/', '/en/contacts/', '/kk/privacy/', '/en/rental-conditions/', '/kk/cars/', '/en/faq/'] as $path) {
+        foreach (['/kk/', '/en/', '/kk/contacts/', '/en/contacts/', '/kk/privacy/', '/en/rental-conditions/', '/kk/cars/astana/', '/en/faq/'] as $path) {
             $response = $this->get($path)->assertOk()->assertSee('hreflang="kk"', false)->assertSee('hreflang="en"', false);
             if (! str_contains($path, '/privacy/')) {
                 $response->assertSee('content="index,follow"', false);
@@ -58,7 +58,7 @@ class PublicLocalizationTest extends CatalogueTestCase
         $this->get($car->legacy_path)->assertDontSee('hreflang="en"', false)->assertSee('hreflang="kk"', false);
         $this->get('/en'.$car->legacy_path)->assertSee('content="noindex,follow"', false);
         $this->get('/sitemap-cars.xml')->assertDontSee('/en'.$car->legacy_path.'</loc>', false);
-        $this->get('/en/cars/')->assertSee('content="noindex,follow"', false)->assertDontSee('hreflang="en"', false);
+        $this->get('/en/cars/astana/')->assertSee('content="noindex,follow"', false)->assertDontSee('hreflang="en"', false);
         $this->get('/sitemap-pages.xml')->assertDontSee('https://legionautorent.kz/en/cars/</loc>', false);
         $faq = FAQ::where('active', true)->first();
         $faq->translations()->where('language', 'en')->first()->update(['published' => false]);
@@ -73,20 +73,20 @@ class PublicLocalizationTest extends CatalogueTestCase
         $this->get('/contacts/')->assertSee('data-city-home href="/kostanay/"', false);
         $catalogue = $this->get('/cars/kostanay/')->assertOk();
         $this->assertSame(14, substr_count($catalogue->getContent(), 'class="car-card"'));
-        $catalogue->assertSee('value="kostanay" selected', false);
+        $catalogue->assertDontSee('name="city"', false);
         $this->get('/cars/?city=')->assertRedirect('/cars/');
-        $this->assertSame(91, substr_count($this->get('/cars/')->getContent(), 'class="car-card"'));
+        $this->get('/cars/')->assertRedirect('/cars/astana/');
         $this->get('/kostanay/')->assertOk();
         $this->get('/')->assertOk()->assertSee('data-city-home href="/"', false);
         $this->get('/en/')->assertOk();
         $this->get('/en/kostanay/')->assertOk()->assertSee('Self-drive car rental in Kostanay');
-        $this->get('/en/contacts/')->assertSee('data-city-home href="/en/kostanay/"', false)->assertSee('data-city-label>Kostanay', false);
+        $this->get('/en/contacts/')->assertSee('data-city-home href="/en/kostanay/"', false)->assertSee('data-city-switch="kostanay"', false);
         $this->get('/')->assertOk()->assertSee('data-city-home href="/"', false);
     }
 
     public function test_filter_has_only_city_price_and_sorting_and_old_urls_still_work(): void
     {
-        $this->get('/cars/')->assertOk()->assertSee('name="city"', false)->assertSee('name="min_price"', false)->assertSee('name="max_price"', false)->assertSee('name="sort"', false)->assertDontSee('name="brand"', false)->assertDontSee('name="category"', false)->assertDontSee('name="seats"', false)->assertDontSee('name="transmission"', false)->assertDontSee('name="drive"', false)->assertDontSee('name="start_date"', false)->assertDontSee('class="category-chip', false);
+        $this->get('/cars/astana/')->assertOk()->assertDontSee('name="city"', false)->assertSee('name="min_price"', false)->assertSee('name="max_price"', false)->assertSee('name="sort"', false)->assertDontSee('name="brand"', false)->assertDontSee('name="category"', false)->assertDontSee('name="seats"', false)->assertDontSee('name="transmission"', false)->assertDontSee('name="drive"', false)->assertDontSee('name="start_date"', false)->assertDontSee('class="category-chip', false);
         $this->get('/')->assertOk()->assertDontSee('name="start_date"', false)->assertDontSee('quick-category');
         $this->get('/category/economy/')->assertOk();
     }
@@ -94,9 +94,9 @@ class PublicLocalizationTest extends CatalogueTestCase
     public function test_system_page_seo_can_be_edited_and_is_used_by_the_page(): void
     {
         $this->publish();
-        $page = Page::where('path', '/cars/')->firstOrFail();
+        $page = Page::where('path', '/cars/astana/')->firstOrFail();
         $page->update(['seo_title' => 'Настроенный каталог', 'seo_description' => 'Описание каталога администратором', 'seo_h1' => 'Автомобили для вашего маршрута', 'og_title' => 'Каталог для социальных сетей']);
-        $this->get('/cars/')->assertSee('<title>Настроенный каталог</title>', false)->assertSee('Описание каталога администратором')->assertSee('Автомобили для вашего маршрута')->assertSee('property="og:title" content="Каталог для социальных сетей"', false);
+        $this->get('/cars/astana/')->assertSee('<title>Настроенный каталог</title>', false)->assertSee('Описание каталога администратором')->assertSee('Автомобили для вашего маршрута')->assertSee('property="og:title" content="Каталог для социальных сетей"', false);
     }
 
     public function test_ajax_request_reports_errors_and_success_without_a_redirect(): void

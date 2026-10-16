@@ -10,16 +10,16 @@ use Tests\CatalogueTestCase;
 
 class CityNavigationAndRequestTest extends CatalogueTestCase
 {
-    public function test_city_switch_stays_on_editorial_and_catalogue_pages_in_each_language(): void
+    public function test_city_navigation_opens_the_city_catalogue_from_editorial_pages_in_each_language(): void
     {
         $this->artisan('legion:publish-locales')->assertSuccessful();
         foreach (['', '/kk', '/en'] as $prefix) {
             foreach (['/contacts/', '/rental-conditions/'] as $path) {
                 $response = $this->get($prefix.$path.'?city=kostanay')->assertOk();
                 $href = $this->cityLink($response->getContent(), 'ustkamenogorsk');
-                $this->assertSame($prefix.$path.'?city=ustkamenogorsk', $href);
+                $this->assertSame($prefix.'/cars/ustkamenogorsk/', $href);
                 $changed = $this->get($href)->assertOk();
-                $this->assertSame($prefix.$path, parse_url($href, PHP_URL_PATH));
+                $this->assertSame($prefix.'/cars/ustkamenogorsk/', parse_url($href, PHP_URL_PATH));
                 $this->assertStringContainsString(localized(City::where('slug', 'ustkamenogorsk')->first(), 'name'), $changed->getContent());
             }
         }
@@ -33,8 +33,25 @@ class CityNavigationAndRequestTest extends CatalogueTestCase
         $this->assertSame('/cars/ustkamenogorsk/?min_price=25000&max_price=80000&sort=-price', $href);
         $this->get($href)->assertOk()->assertSee('value="25000"', false)->assertSee('value="80000"', false)->assertSee('value="-price" selected', false);
         $home = $this->get('/kostanay/')->assertOk();
-        $this->assertSame('/ustkamenogorsk/', $this->cityLink($home->getContent(), 'ustkamenogorsk'));
-        $this->assertSame('/', $this->cityLink($home->getContent(), 'astana'));
+        $this->assertSame('/cars/ustkamenogorsk/', $this->cityLink($home->getContent(), 'ustkamenogorsk'));
+        $this->assertSame('/cars/astana/', $this->cityLink($home->getContent(), 'astana'));
+    }
+
+    public function test_city_navigation_replaces_the_dropdown_and_general_fleet_entry(): void
+    {
+        foreach (['', '/kk', '/en'] as $prefix) {
+            $response = $this->get($prefix.'/cars/kostanay/')->assertOk();
+            $dom = new \DOMDocument;
+            @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$response->getContent());
+            $xpath = new \DOMXPath($dom);
+            $this->assertSame(4, $xpath->query('//nav[@class="city-navigation"]/a')->length);
+            $this->assertSame(1, $xpath->query('//nav[@class="city-navigation"]/a[@data-city-switch="kostanay"][@aria-current="location"]')->length);
+            $this->assertSame(0, $xpath->query('//details[@class="city-menu"]')->length);
+            $this->assertSame(0, $xpath->query('//a[@data-site-nav][contains(@href,"/cars/")]')->length);
+            $this->get($prefix.'/cars/?max_price=50000')->assertStatus(302)->assertHeader('Location', $prefix.'/cars/kostanay/?max_price=50000');
+            $redirect = $this->get($prefix.'/cars/')->assertStatus(302)->assertHeader('Location', $prefix.'/cars/kostanay/');
+            $this->get($redirect->headers->get('Location'))->assertOk();
+        }
     }
 
     public function test_public_request_forms_have_no_dates_and_submission_stores_a_dateless_lead(): void

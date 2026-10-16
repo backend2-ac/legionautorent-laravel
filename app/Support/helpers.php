@@ -130,16 +130,11 @@ function city_switch_url(City $city): string
 {
     $request = request();
     $path = $request->attributes->get('base_path', '/');
-    $cities = $request->attributes->get('nav_cities', collect());
     $query = [];
-    if ($cities->contains('legacy_path', $path)) {
-        $path = $city->legacy_path;
-    } elseif ($path === '/cars/' || $request->attributes->get('catalog_city')) {
-        $path = $city->getCatalogPath();
+    if ($path === '/cars/' || $request->attributes->get('catalog_city')) {
         $query = $request->only(['min_price', 'max_price', 'sort']);
-    } else {
-        $query['city'] = $city->slug;
     }
+    $path = $city->getCatalogPath();
 
     return language_url($path).($query ? '?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986) : '');
 }

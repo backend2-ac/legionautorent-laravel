@@ -23,7 +23,7 @@ class PublicContext
         $r->attributes->set('nonce', base64_encode(random_bytes(24)));
         if (! $private && ! in_array($base, ['/healthz', '/healthz/', '/robots.txt'])) {
             $cities = PublicContent::all()['cities'];
-            if (($r->query->has('city') && blank($r->query('city'))) || ($base === '/cars/' && ! $r->query->has('city'))) {
+            if ($r->query->has('city') && blank($r->query('city'))) {
                 $r->session()->forget('selected_city');
             }
             $chosen = $cities->firstWhere('slug', $r->query('city'));

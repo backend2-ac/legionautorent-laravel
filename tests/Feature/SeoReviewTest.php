@@ -14,6 +14,11 @@ class SeoReviewTest extends CatalogueTestCase
         $this->artisan('legion:publish-locales')->assertSuccessful();
         $review = json_decode(file_get_contents(resource_path('data/seo-review-2026-10.json')), true);
         foreach ($review['pages'] as $row) {
+            if ($row['path'] === '/cars/') {
+                $this->get('/cars/')->assertRedirect();
+
+                continue;
+            }
             $response = $this->get($row['path'])->assertOk();
             foreach ($row['fields'] as $field => $value) {
                 $response->assertSee(e($value), false);
@@ -61,8 +66,8 @@ class SeoReviewTest extends CatalogueTestCase
                 $this->get('/sitemap-pages.xml')->assertSee('https://legionautorent.kz'.$path.'</loc>', false);
             }
         }
-        $this->get('/cars/')->assertOk();
-        $this->assertSame(91, substr_count($this->get('/cars/')->getContent(), 'class="car-card"'));
+        $this->get('/cars/')->assertRedirect();
+        $this->get('/sitemap-pages.xml')->assertDontSee('https://legionautorent.kz/cars/</loc>', false);
         $this->get('/cars/pavlodar/?max_price=25000')->assertSee('content="noindex,follow"', false)->assertSee('rel="canonical" href="https://legionautorent.kz/cars/pavlodar/"', false);
         $this->get('/cars/pavlodar/?utm_source=review')->assertSee('content="index,follow"', false);
         $this->withHeader('X-Legion-Partial', 'catalog')->get('/cars/kostanay/?sort=price')->assertHeader('X-Legion-Robots', 'noindex,follow');

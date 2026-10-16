@@ -2,6 +2,7 @@ import './site.css';
 import './night-garage.css';
 import './mercedes-preview.css';
 import './refinements.css';
+import './city-navigation.css';
 import {initPageMotion} from './page-motion.js';
 import {initGarageUI} from './night-garage.js';
 import {initPhoneMasks} from './phone-mask.js';
@@ -155,7 +156,11 @@ if(filters&&window.fetch){
       const option=[...($('[name=city]',filters)?.options||[])].find(item=>item.value===city);
       if(city!==null){
         const label=$('[data-city-label]');
-        label.textContent=city&&option?option.textContent:label.dataset.emptyLabel;
+        if(label)label.textContent=city&&option?option.textContent:label.dataset.emptyLabel;
+        document.querySelectorAll('[data-city-switch]').forEach(link=>{
+          if(link.dataset.citySwitch===city)link.setAttribute('aria-current','location');
+          else link.removeAttribute('aria-current');
+        });
         const home=response.headers.get('X-Legion-Home');
         if(home)document.querySelectorAll('[data-city-home]').forEach(link=>link.href=home);
       }
