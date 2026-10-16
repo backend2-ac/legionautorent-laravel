@@ -1,6 +1,6 @@
 {
   "frontend/main.js": {
-    "file": "assets/main-jMeohXGL.js",
+    "file": "assets/main-B08YKzw4.js",
     "name": "main",
     "src": "frontend/main.js",
     "isEntry": true,
@@ -8,14 +8,14 @@
       "frontend/mercedes-preview.js"
     ],
     "css": [
-      "assets/main-WeTthmXJ.css"
+      "assets/main-Dt8X5mQG.css"
     ],
     "assets": [
       "assets/grain-Blhu7toF.webp"
     ]
   },
   "frontend/mercedes-preview.js": {
-    "file": "assets/mercedes-preview-eQ7psf1E.js",
+    "file": "assets/mercedes-preview-BwmrzjXR.js",
     "name": "mercedes-preview",
     "src": "frontend/mercedes-preview.js",
     "isDynamicEntry": true,

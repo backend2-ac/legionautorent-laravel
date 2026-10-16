@@ -34,3 +34,12 @@ html{scroll-padding-top:calc(var(--site-header-height) + 24px)}
 }
 @media(prefers-reduced-motion:reduce){.city-navigation a{transition:none}}
 
+
+@media(max-width:767px){
+ .mobile-menu nav{max-height:calc(100svh - 72px);overflow-y:auto;overscroll-behavior:contain}
+ .mobile-menu-contacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-block:12px}
+ .mobile-menu .mobile-menu-contacts a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 8px;border:1px solid var(--line);border-radius:3px;font-size:13px;font-weight:600}
+ .mobile-menu-contacts .mobile-wa{background:var(--yellow);border-color:var(--yellow);color:#10100f}
+ .mobile-menu-contacts .icon{width:18px;height:18px}
+ .site-footer{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+}
