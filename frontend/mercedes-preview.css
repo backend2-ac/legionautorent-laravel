@@ -26,13 +26,14 @@
 .home-page .site-header:not(.is-scrolled){background:transparent;border-color:transparent}
 
 /* Mode and geometry are reserved before rendering on both mobile and desktop. */
-.mercedes-preview[data-mode=cinematic] .mercedes-pin{height:calc(var(--hero-vh) * 500)}
+.mercedes-preview[data-mode=cinematic] .mercedes-pin{height:calc(var(--hero-vh) * 280)}
+@media(max-width:899px){.mercedes-preview[data-mode=cinematic] .mercedes-pin{height:calc(var(--hero-vh) * 240)}}
 .mercedes-preview[data-mode=cinematic] .mercedes-stage{height:calc(var(--hero-vh) * 100);min-height:0}
 .mercedes-preview[data-mode=cinematic] .mercedes-stage{position:sticky;top:0}
 .mercedes-preview[data-mode=cinematic] .mercedes-picture{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;transform:none;margin:0}
 /* The canvas keeps its source resolution; CSS only changes its presentation. */
 .mercedes-preview[data-mode=cinematic] .mercedes-picture:before{display:none}
-.mercedes-preview[data-mode=cinematic] .mercedes-picture img,.mercedes-preview[data-mode=cinematic] .mercedes-canvas{object-fit:cover;object-position:center}
+.mercedes-preview[data-mode=cinematic] .mercedes-picture img,.mercedes-preview[data-mode=cinematic] .mercedes-canvas{object-fit:contain;object-position:center}
 @media(orientation:portrait){.mercedes-preview[data-mode=cinematic] .mercedes-picture img,.mercedes-preview[data-mode=cinematic] .mercedes-canvas{object-fit:contain}}
 .mercedes-preview[data-mode=cinematic] .mercedes-captions{position:absolute;inset:0;padding-top:0;pointer-events:none}
 .mercedes-preview[data-mode=cinematic] .mercedes-caption{position:absolute;top:16%;left:0;right:0;opacity:0;visibility:hidden;transform:translateY(12px)}

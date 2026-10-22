@@ -1,0 +1,77 @@
+/* Presentation only: the existing pin, frame sequence and scroll timing stay intact. */
+.home-page .site-header:not(.is-scrolled){background:transparent;border-color:transparent}
+.home-page .site-header.is-scrolled{background:rgba(16,16,15,.97)}
+.home-page .mercedes-preview{width:100%;margin:0;background:#05070d}
+.home-page .mercedes-stage{background:#05070d}
+.mercedes-title-shade,.mercedes-ending-shade{position:absolute;left:0;right:0;pointer-events:none;z-index:1}
+.mercedes-title-shade{top:0;height:40%;background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent)}
+.mercedes-ending-shade{bottom:0;height:45%;background:linear-gradient(to bottom,transparent,#10100f);opacity:var(--hero-ending-opacity,0)}
+.home-page .mercedes-preview .mercedes-veil,.home-page .mercedes-preview .mercedes-grain{display:none}
+.home-page .mercedes-preview .mercedes-caption:before{display:none}
+.home-page .mercedes-preview .mercedes-caption .mercedes-title{
+ font:600 clamp(28px,2.5vw,48px)/1.12 var(--display);letter-spacing:-.035em;
+ max-width:1120px;width:100%;margin:0 auto;text-align:center;text-transform:uppercase;
+ text-wrap:balance;color:#fff;text-shadow:0 2px 6px #000,0 6px 24px #000b;
+}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-caption{
+ top:calc(var(--site-header-height) + 30px);left:0;right:0;text-align:center;
+}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-captions{
+ width:min(1180px,calc(100% - 48px));margin-inline:auto;
+}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-picture{
+ top:0;bottom:0;
+ height:auto;left:0;right:0;width:100%;background:#05070d;
+}
+.home-page .mercedes-preview .mercedes-picture img,.home-page .mercedes-preview .mercedes-canvas{
+ object-fit:contain;object-position:center;
+}
+.home-page .mercedes-preview .mercedes-eyebrow{
+ font-size:12px;line-height:1.4;margin-bottom:12px;color:#ffca28;
+ text-shadow:0 2px 4px #000,0 3px 12px #000;
+}
+.home-page .mercedes-preview .mercedes-eyebrow>span{background:transparent;border:0;padding:0}
+.home-page .mercedes-preview .mercedes-count{margin-top:12px;font-size:15px;text-shadow:0 2px 5px #000}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-actions--primary{
+ display:flex;flex-direction:row;justify-content:center;align-items:center;gap:16px;
+ width:min(620px,calc(100% - 40px));top:auto;bottom:calc(var(--hero-vh) * 6 + var(--hero-obscured,0px));
+ left:0;right:0;margin:0 auto;opacity:1;visibility:visible;
+}
+.home-page .mercedes-preview .mercedes-actions .button{min-width:224px;min-height:56px;margin:0}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-bottom{
+ display:flex;bottom:10px;left:0;right:0;padding:0;justify-content:flex-end;
+}
+.home-page .mercedes-preview .mercedes-bottom .text-link{
+ font-size:16px;font-weight:600;color:#fff;text-shadow:0 2px 4px #000,0 3px 12px #000;
+}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-chapter{
+ display:flex;top:calc(var(--site-header-height) + 14px);font-size:11px;color:#eee;
+ text-shadow:0 2px 4px #000,0 3px 12px #000;
+}
+.home-page .mercedes-preview[data-mode=cinematic] .mercedes-progress{bottom:0;background:transparent}
+.home-page .mercedes-preview[data-mode=cinematic]>.search-wrap{
+ position:relative;width:min(1280px,calc(100% - var(--gutter)*2));margin:0 auto;padding:0;
+}
+/* Only the seam with the following fleet changes; its content and layout stay intact. */
+.home-page .mercedes-preview + .fleet-section{padding-top:32px}
+.home-page .mercedes-preview[data-mode=static] .mercedes-title-shade,
+.home-page .mercedes-preview[data-mode=static] .mercedes-ending-shade{display:none}
+@media(max-width:899px){
+ .home-page .mercedes-preview .mercedes-caption .mercedes-title{font-size:clamp(16px,4.1vw,28px)}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-captions{width:calc(100% - 32px)}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-caption{top:calc(var(--site-header-height) + 28px)}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-picture{
+  top:0;bottom:0;
+ }
+ .home-page .mercedes-preview .mercedes-eyebrow{font-size:11px;margin-bottom:10px}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-chapter{top:calc(var(--site-header-height) + 8px)}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-actions--primary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ .home-page .mercedes-preview .mercedes-actions .button{min-width:0;width:100%;padding:12px 8px;font-size:12px;gap:6px}
+ .home-page .mercedes-preview .mercedes-bottom .text-link{font-size:16px}
+ .home-page .mercedes-preview[data-mode=cinematic] .mercedes-bottom{bottom:8px}
+ .home-page .mercedes-preview + .fleet-section{padding-top:24px}
+}
+
+/* The bitmap now matches the stage aspect ratio; contain happens inside it. */
+.home-page .mercedes-preview .mercedes-canvas{object-fit:fill;background:#05070d}
+.home-page .mercedes-preview[data-mode=cinematic]>.search-wrap{background:#10100f}

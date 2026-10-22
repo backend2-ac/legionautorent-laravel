@@ -1,3 +1,4 @@
+import {createHeroCanvasRenderer} from './hero-canvas-renderer.js';
 import {createHeroPreview} from './hero-preview.js';
 import {listenMedia,supportsWebp} from './browser-support.js';
 // One scroll pipeline on every device. No video seeks or autoplay permission.
@@ -6,7 +7,7 @@ import {queueFrame,cancelFrame} from './motion-frame.js';
 export function initMercedesPreview(root){
   const data=JSON.parse(root.querySelector('#hero-frames').textContent);
   const canvas=root.querySelector('canvas'),poster=root.querySelector('img');
-  let context;
+  const renderer=createHeroCanvasRenderer(canvas);
   const stage=root.querySelector('.mercedes-stage'),booking=root.querySelector('.search-wrap');
   const pin=root.querySelector('.mercedes-pin'),actions=root.querySelector('[data-hero-actions]');
   const recovery=root.querySelector('[data-hero-recovery]'),retry=root.querySelector('[data-hero-retry]');
@@ -64,24 +65,24 @@ export function initMercedesPreview(root){
       band.el.inert=opacity<=.001;
       band.el.setAttribute('aria-hidden',String(opacity<=.001));
     });
-    const visible=staticMode||compact.matches||booking.contains(document.activeElement)||bands[0].el.style.visibility==='visible';
+    const visible=true;
     booking.style.opacity=visible?'1':'0';booking.style.visibility=visible?'visible':'hidden';booking.inert=!visible;
-    const showActions=staticMode||compact.matches||p>=.78;
+    const showActions=true;
     if(actionsVisible!==showActions){
       actionsVisible=showActions;actions.style.opacity=showActions?'1':'0';actions.style.visibility=showActions?'visible':'hidden';
       actions.inert=!showActions;actions.setAttribute('aria-hidden',String(!showActions));
     }
     progress.style.transform=`scaleX(${p})`;chapter.textContent=String(active+1).padStart(2,'0');
     root.dataset.progress=p.toFixed(4);
+    const ending=clamp((p-.9)/.1);
+    root.style.setProperty('--hero-ending-opacity',String(ending*ending*(3-2*ending)));
   }
 
   function draw(index,image=images.get(index),quality='full'){
     if(!image)return false;
-    if(drawn!==index||drawnQuality!==quality){
+    if(drawn!==index||drawnQuality!==quality||renderer.needsResize()){
       try{
-        context||=canvas.getContext('2d',{alpha:false,desynchronized:true});
-        if(!context)throw new Error('Canvas unavailable');
-        context.drawImage(image,0,0,canvas.width,canvas.height);
+        renderer.render(image,index,quality);
       }catch{fallback('canvas');return false;}
       if(quality==='full'){images.delete(index);images.set(index,image);}
       drawn=index;drawnQuality=quality;root.dataset.quality=quality;
@@ -225,8 +226,10 @@ export function initMercedesPreview(root){
     if(!enabled||!inView||document.hidden){lastTick=0;return;}
     if(!hasMoved){primePoster();lastTick=0;return;}
     const dt=lastTick?Math.min(64,now-lastTick):16.667;lastTick=now;
-    const change=(target-shown)*(1-Math.exp(-dt/130));
-    const next=clamp(shown+Math.max(-dt/1400,Math.min(dt/1400,change)));
+    // Smooth wheel/touch input independently of display refresh rate, without
+    // the long catch-up delay after a quick swipe through the shorter pin.
+    const change=(target-shown)*(1-Math.exp(-dt/160));
+    const next=clamp(shown+Math.max(-dt/900,Math.min(dt/900,change)));
     const candidate=Math.round(next*(data.count-1));
     preview.request(candidate);
     const direction=travel;
@@ -258,11 +261,13 @@ export function initMercedesPreview(root){
     schedule();
   }
   function measure(){
+    renderer.resize(stage.clientWidth,stage.clientHeight);
     start=root.getBoundingClientRect().top+scrollY;
     distance=Math.max(1,pin.offsetHeight-stage.offsetHeight);end=start+root.offsetHeight;
     onScroll();
   }
   function release(){
+    renderer.reset();
     epoch++;clearTimeout(retryTimer);preview?.stop();controllers.forEach(controller=>controller.abort());controllers.clear();
     cancelFrame(frame);frame=0;lastTick=0;
     images.forEach(image=>image.close?.());images.clear();encoded.clear();fetching.clear();decoding.clear();
@@ -286,25 +291,26 @@ export function initMercedesPreview(root){
     if(!variant){fallback('format');return;}
     lockViewport();
     bands.forEach(band=>band.opacity=-1);
-    canvas.width=variant.width;canvas.height=variant.height;
+
     if(recovery)recovery.hidden=true;delete root.dataset.failure;
     enabled=true;shown=0;root.dataset.variant=variantName();root.dataset.format=jpeg?'jpeg':'webp';
     const previewSource=data.preview?.[jpeg?'jpeg':'webp'];
     preview=createHeroPreview(previewSource?{...previewSource,mime:jpeg?'image/jpeg':'image/webp'}:null,{
       decode,changed:schedule,settled:()=>{if(enabled){hdReady=true;prepareFrames(Math.round(shown*(data.count-1)));pumpFetches();}}
     });
-    if(compact.matches)root.append(booking);else stage.append(booking);
+    root.append(booking);
     root.dataset.mode='cinematic';root.dataset.state='loading';root.dataset.rendered='false';paint(0);
     queueFrame(()=>{adjustControls();measure();});
+    renderer.resize(stage.clientWidth,stage.clientHeight);
     primePoster();
     schedule();
   }
   function primePoster(){
-    if(enabled&&poster.complete&&poster.naturalWidth&&!images.has(0)){
-      images.set(0,poster);
-      // Native HTML poster is already on screen. Avoid allocating/uploading a
-      // canvas until movement; first frame downloading never delays the LCP.
-      if(drawn<0){drawn=0;root.dataset.frame='0';root.dataset.state='ready';}
+    if(enabled&&poster.complete&&poster.naturalWidth){
+      if(!images.has(0))images.set(0,poster);
+      // Composite the poster too, so the first view already fills the banner.
+      if(drawn<0||renderer.needsResize())draw(0,poster);
+      if(warmed)return;
       const generation=epoch;
       const ready=typeof poster.decode==='function'?Promise.resolve().then(()=>poster.decode()):Promise.resolve();
       ready.catch(()=>{}).then(()=>{if(generation===epoch&&enabled)queueFrame(()=>queueFrame(warmStart));});
