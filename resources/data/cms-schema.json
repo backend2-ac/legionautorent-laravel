@@ -1473,7 +1473,7 @@
           ],
           [
             "reel",
-            "Видеоотзыв (Instagram)"
+            "Видео из Instagram"
           ]
         ],
         "editable": true
@@ -1502,7 +1502,7 @@
         "primary": false,
         "max_length": null,
         "label": "Текст",
-        "help": "Для видеоотзыва вставьте ссылку на рилс Instagram, например https://www.instagram.com/reel/…/. Заголовок — подпись под видео.",
+        "help": "Для видео из Instagram вставьте ссылку на рилс, например https://www.instagram.com/reel/…/. Заголовок — подпись под видео.",
         "choices": [],
         "editable": true
       },
@@ -1698,7 +1698,7 @@
           ],
           [
             "reviews",
-            "Видеоотзывы"
+            "Видео из Instagram"
           ],
           [
             "seo",
