@@ -58,9 +58,15 @@ class MigrationParityTest extends CatalogueTestCase
         }
         $this->get('/kz/')->assertNotFound();
         $this->get('/missing-legacy-page/')->assertNotFound();
-        foreach (json_decode(file_get_contents(resource_path('data/legacy-500-paths.json')), true) as $path) {
+        $retired = json_decode(file_get_contents(resource_path('data/legacy-500-paths.json')), true);
+        foreach ($retired as $path) {
             $this->get($path)->assertNotFound();
         }
+        (require database_path('migrations/2026_11_11_193753_redirect_retired_car_urls.php'))->up();
+        foreach ($retired as $path) {
+            $this->get($path)->assertStatus(301)->assertRedirect('/cars/astana/');
+        }
+        $this->get('/sitemap-cars.xml')->assertDontSee($retired[0]);
     }
 
     public function test_city_og_urls_sitemap_and_translation_gates_agree(): void

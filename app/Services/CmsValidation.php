@@ -35,7 +35,7 @@ class CmsValidation
 
     public static function exists(string $p): bool
     {
-        return in_array($p, ['/', '/cars/', '/faq/', '/booking/', '/callback/', '/request-success/']) || Car::where('legacy_path', $p)->public()->exists() || City::where('legacy_path', $p)->where('active', true)->exists() || Page::where('path', $p)->where('active', true)->exists() || CarCategory::where('slug', trim(str_replace('/category/', '', $p), '/'))->where('active', true)->exists();
+        return in_array($p, ['/', '/cars/', '/faq/', '/booking/', '/callback/', '/request-success/']) || Car::where('legacy_path', $p)->public()->exists() || City::where('legacy_path', $p)->where('active', true)->exists() || City::where('active', true)->get()->contains(fn (City $city): bool => $city->getCatalogPath() === $p) || Page::where('path', $p)->where('active', true)->exists() || CarCategory::where('slug', trim(str_replace('/category/', '', $p), '/'))->where('active', true)->exists();
     }
 
     /**
