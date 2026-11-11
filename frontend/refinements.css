@@ -173,3 +173,6 @@ button:focus-visible,.button:focus-visible,.icon-button:focus-visible,.car-detai
  .reels-track::-webkit-scrollbar{display:none}
  .reel-card{flex:0 0 min(84vw,360px);scroll-snap-align:start}
 }
+/* The WhatsApp action is the main one on the car page: full width, call underneath. */
+.booking-direct--whatsapp{display:grid;grid-template-columns:1fr;gap:10px}
+.booking-direct--whatsapp .button{width:100%;justify-content:center;gap:12px}
