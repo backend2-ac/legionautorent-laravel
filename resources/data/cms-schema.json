@@ -1689,6 +1689,10 @@
             "Преимущества"
           ],
           [
+            "about",
+            "О компании"
+          ],
+          [
             "seo",
             "Описание города"
           ],
@@ -3079,6 +3083,22 @@
         "max_length": null,
         "label": "Цена в сутки, ₸",
         "help": "",
+        "choices": [],
+        "editable": true,
+        "digits": 12,
+        "decimals": 0
+      },
+      {
+        "name": "price_from",
+        "column": "price_from",
+        "type": "DecimalField",
+        "nullable": true,
+        "blank": true,
+        "unique": false,
+        "primary": false,
+        "max_length": null,
+        "label": "Цена «от» на сайте, ₸",
+        "help": "Необязательно. Пусто — считается автоматически: цена в сутки минус самая большая скидка.",
         "choices": [],
         "editable": true,
         "digits": 12,

@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Http\Controllers\BookingController;
 use App\Models\Car;
 use App\Models\CarBrand;
 use App\Models\CarCategory;
@@ -17,14 +16,11 @@ class PublicForm implements \IteratorAggregate
 
     public $non_field_errors;
 
-    public function __construct(string $kind = 'booking', array $initial = [], array $errors = [])
+    public function __construct(string $kind = 'filter', array $initial = [], array $errors = [])
     {
         $this->errors = $errors;
         $this->non_field_errors = new HtmlString(isset($errors['_global']) ? '<p class="errorlist">'.e($errors['_global'][0]).'</p>' : '');
-        $defs = $kind === 'filter' ? ['city' => ['Город', 'select', false], 'min_price' => ['Цена от', 'number', false], 'max_price' => ['Цена до', 'number', false], 'sort' => ['Сортировка', 'select', false]] : ['city' => ['Город', 'select', true], 'name' => ['Ваше имя', 'text', true], 'phone' => ['Телефон', 'tel', true], 'comment' => ['Комментарий', 'textarea', false], 'consent' => [BookingController::CONSENT, 'checkbox', true], 'source_token' => ['', 'hidden', true], 'website' => ['Website', 'text', false]];
-        if ($kind === 'booking') {
-            $defs = ['car' => ['Автомобиль', 'select', false], ...$defs];
-        }
+        $defs = ['city' => ['Город', 'select', false], 'min_price' => ['Цена от', 'number', false], 'max_price' => ['Цена до', 'number', false], 'sort' => ['Сортировка', 'select', false]];
         foreach ($defs as $n => [$l,$t,$req]) {
             $opts = [];
             if ($t === 'select') {

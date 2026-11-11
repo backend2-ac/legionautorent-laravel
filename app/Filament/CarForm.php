@@ -11,10 +11,12 @@ use App\Services\CmsValidation;
 use App\Services\DiscountPresets;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -98,7 +100,7 @@ class CarForm
             Tab::make('Автомобиль')->schema([Section::make('Основные данные')->description('Название, один город, описание и показ автомобиля на сайте.')->schema($main)->columns(['default' => 1, 'lg' => 2])]),
             Tab::make('Фотографии')->schema([$photos]),
             Tab::make('Цены и скидки')->schema([
-                Section::make('Основная цена')->schema(CmsFields::inputs(Car::class, [], ['base_price', 'deposit', 'mileage_limit']))->columns(['default' => 1, 'lg' => 3]),
+                Section::make('Основная цена')->description('На сайте везде показывается цена «от»: цена в сутки минус самая большая скидка. Её можно задать вручную.')->schema(self::priceInputs())->columns(['default' => 1, 'lg' => 2]),
                 $prices, self::discountPicker(), $discounts,
             ]),
             Tab::make('Характеристики')->schema([
@@ -112,6 +114,23 @@ class CarForm
                 Section::make('Исходные технические данные')->schema(CmsFields::inputs(Car::class, [], ['legacy_id', 'legacy_meta', 'sort_order']))->collapsible()->collapsed(),
             ]),
         ])];
+    }
+
+    /**
+     * @return array<int, Field>
+     */
+    private static function priceInputs(): array
+    {
+        $inputs = CmsFields::inputs(Car::class, [], ['base_price', 'price_from', 'deposit', 'mileage_limit']);
+        foreach ($inputs as $input) {
+            if ($input instanceof TextInput && $input->getName() === 'price_from') {
+                $input->numeric()->minValue(1)->suffix('₸')
+                    ->placeholder(fn (?Car $record): string => $record ? 'Автоматически: '.number_format($record->fromPrice(), 0, '.', ' ').' ₸' : 'Посчитается автоматически')
+                    ->helperText('Пусто — цена в сутки минус самая большая скидка. Пример: 250 000 ₸ и скидка 30% → от 175 000 ₸.');
+            }
+        }
+
+        return $inputs;
     }
 
     private static function discountPicker(): Section

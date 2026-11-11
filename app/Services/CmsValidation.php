@@ -83,6 +83,9 @@ class CmsValidation
             }if ($m->base_price < 1) {
                 self::fail('base_price', 'Укажите положительную цену.');
             }
+            if ($m->price_from !== null && ((int) $m->price_from < 1 || (int) $m->price_from > (int) $m->base_price)) {
+                self::fail('price_from', 'Цена «от» должна быть больше нуля и не выше цены в сутки.');
+            }
         }
         if ($m instanceof City && ! $m->legacy_path) {
             $m->legacy_path = '/'.$m->slug.'/';

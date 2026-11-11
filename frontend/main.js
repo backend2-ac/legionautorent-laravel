@@ -66,42 +66,6 @@ document.addEventListener('click',event=>{
 const submitted=$('[data-page-event]');
 if(submitted)window.dataLayer.push({event:submitted.dataset.pageEvent,page:location.pathname});
 
-// Progressive enhancement: validation and success remain beside the request.
-document.querySelectorAll('[data-request-form]').forEach(form=>form.addEventListener('submit',async event=>{
-  if(!form.checkValidity()||!window.fetch)return;
-  event.preventDefault();
-  const button=$('button[type=submit]',form);if(button.disabled)return;
-  button.disabled=true;button.setAttribute('aria-busy','true');
-  const feedback=$('[data-request-feedback]',form);
-  const showFeedback=(state,message)=>{
-    feedback.dataset.state=state;
-    $('[data-request-feedback-title]',feedback).textContent=state==='success'?form.dataset.successTitle:form.dataset.errorTitle;
-    $('[data-request-feedback-message]',feedback).textContent=message;
-    feedback.setAttribute('role',state==='error'?'alert':'status');
-    feedback.hidden=false;
-  };
-  feedback.hidden=true;form.querySelectorAll('.request-field-error').forEach(el=>el.remove());
-  form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});
-  try{
-    const response=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'});
-    const data=await response.json();
-    if(response.ok&&data.success){
-      showFeedback('success',data.detail||data.message);
-      feedback.focus({preventScroll:true});
-      form.querySelectorAll('.field,.consent-field,button[type=submit]').forEach(el=>el.hidden=true);
-      window.dataLayer.push({event:'submit_request',page:location.pathname});
-    }else{
-      showFeedback('error',data.errors&&!data.errors._global&&response.status===400?form.dataset.invalid:(data.message||form.dataset.error));
-      Object.entries(data.errors||{}).forEach(([name,messages])=>{
-        const input=form.elements.namedItem(name);if(!input||!input.insertAdjacentElement)return;
-        const error=document.createElement('p');error.className='request-field-error';error.id=`${input.id}-error`;error.textContent=messages[0];
-        input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby',error.id);input.insertAdjacentElement('afterend',error);
-      });
-      form.querySelector('[aria-invalid]')?.focus({preventScroll:true});
-    }
-  }catch{showFeedback('error',form.dataset.error);}
-  finally{feedback.hidden=false;button.disabled=false;button.removeAttribute('aria-busy');}
-}));
 document.querySelectorAll('[data-gallery]').forEach(gallery=>{
   const track=$('.gallery-track',gallery),figures=[...track.querySelectorAll('figure')];
   const move=direction=>track.scrollBy({left:direction*track.clientWidth,behavior:reduced.matches?'auto':'smooth'});

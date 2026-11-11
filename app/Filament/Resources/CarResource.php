@@ -45,11 +45,12 @@ class CarResource extends CmsResource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn ($query) => $query->with(['images', 'cities']))->columns([
+        return $table->modifyQueryUsing(fn ($query) => $query->with(['images', 'cities', 'discounts']))->columns([
             ImageColumn::make('main_image.card_image')->label('Фото')->disk('media')->imageWidth(88)->imageHeight(56),
             TextColumn::make('name')->label('Автомобиль')->searchable()->forceSearchCaseInsensitive()->sortable()->description(fn (Car $record): string => $record->legacy_path),
             TextColumn::make('cities.name')->label('Города')->badge(),
             TextColumn::make('base_price')->label('Цена / сутки')->numeric(decimalPlaces: 0, thousandsSeparator: ' ')->suffix(' ₸')->sortable(),
+            TextColumn::make('from_price')->label('На сайте «от»')->state(fn (Car $record): int => $record->fromPrice())->numeric(decimalPlaces: 0, thousandsSeparator: ' ')->prefix('от ')->suffix(' ₸'),
             IconColumn::make('active')->label('На сайте')->boolean(),
             TextColumn::make('sort_order')->label('Порядок')->toggleable(isToggledHiddenByDefault: true),
         ])->filters([

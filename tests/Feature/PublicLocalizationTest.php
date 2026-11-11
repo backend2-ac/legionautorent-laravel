@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\BookingController;
-use App\Models\BookingRequest;
 use App\Models\Car;
 use App\Models\City;
 use App\Models\FAQ;
@@ -97,19 +95,5 @@ class PublicLocalizationTest extends CatalogueTestCase
         $page = Page::where('path', '/cars/astana/')->firstOrFail();
         $page->update(['seo_title' => 'Настроенный каталог', 'seo_description' => 'Описание каталога администратором', 'seo_h1' => 'Автомобили для вашего маршрута', 'og_title' => 'Каталог для социальных сетей']);
         $this->get('/cars/astana/')->assertSee('<title>Настроенный каталог</title>', false)->assertSee('Описание каталога администратором')->assertSee('Автомобили для вашего маршрута')->assertSee('property="og:title" content="Каталог для социальных сетей"', false);
-    }
-
-    public function test_ajax_request_reports_errors_and_success_without_a_redirect(): void
-    {
-        $this->publish();
-        $car = Car::public()->where('accepts_requests', true)->first();
-        $city = $car->cities->first();
-        $this->postJson('/en/booking/', ['city' => $city->id, 'car' => $car->id, 'name' => 'Test', 'phone' => '123', 'consent' => 'on', 'source_token' => BookingController::token($car->legacy_path)])->assertStatus(400)->assertJsonPath('success', false)->assertJsonPath('errors.phone.0', 'Enter a phone number with 10 to 15 digits.');
-        $response = $this->postJson('/en/booking/', ['city' => $city->id, 'car' => $car->id, 'name' => 'Test', 'phone' => '+77001112233', 'consent' => 'on', 'source_token' => BookingController::token($car->legacy_path)])->assertOk()->assertJsonPath('success', true)->assertJsonPath('message', 'Thank you! Your request has been sent. Our manager will contact you to confirm the details.');
-        $this->assertNull($response->headers->get('Location'));
-        $lead = BookingRequest::firstOrFail();
-        $this->assertSame('/en'.$car->legacy_path, $lead->source_page);
-        $this->assertSame($city->id, $lead->city_id);
-        $this->postJson('/kk/callback/', ['city' => $city->id, 'name' => 'Тест', 'phone' => '+77001112233', 'source_token' => BookingController::token('/contacts/')])->assertStatus(400)->assertJsonPath('success', false)->assertJsonStructure(['errors' => ['consent']]);
     }
 }

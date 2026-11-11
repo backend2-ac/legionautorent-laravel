@@ -95,21 +95,23 @@ class SiteController extends Controller
             return self::render('faq_page', ['seo' => Seo::page(title: site_text('FAQ | LEGIONAUTORENT'), description: site_text('Ответы на вопросы об аренде автомобилей.'), h1: site_text('Вопросы об аренде'), languages: Seo::faqLanguages()), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->get()]);
         }
         if ($path === '/request-success/') {
-            return self::render('success', ['seo' => Seo::page(title: site_text('Заявка отправлена | LEGIONAUTORENT'), h1: site_text('Заявка отправлена'), noindex: true), 'submitted' => (bool) $r->session()->pull('booking_success')]);
+            return new RedirectResponse(home_url(), 301);
         }
         if ($path === '/booking/' || $path === '/callback/') {
-            return app(BookingController::class)->show($r, $path === '/callback/');
+            $car = $r->query('car') ? Car::public()->find($r->query('car')) : null;
+
+            return new RedirectResponse($car ? language_url($car->legacy_path) : language_url('/contacts/'), 301);
         }
         if ($city = City::where('active', true)->where('legacy_path', $path)->with('translations')->first()) {
             $cars = self::cars()->whereHas('cities', fn ($q) => $q->where('locations_city.id', $city->id))->get();
-            $ctx = ['seo' => Seo::page($city), 'city' => $city, 'cars' => $cars, 'car_count' => $cars->count(), 'min_price' => $cars->min('base_price'), 'steps' => self::blocks('step'), 'benefits' => self::blocks('benefit'), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))->get(), 'breadcrumbs' => $path === '/' ? [] : [[site_text('Главная').' — '.localized($city, 'name'), language_url($path)]]];
+            $ctx = ['seo' => Seo::page($city), 'city' => $city, 'cars' => $cars, 'car_count' => $cars->count(), 'min_price' => $cars->min(fn (Car $car): int => $car->fromPrice()), 'steps' => self::blocks('step'), 'benefits' => self::blocks('benefit'), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))->get(), 'breadcrumbs' => $path === '/' ? [] : [[site_text('Главная').' — '.localized($city, 'name'), language_url($path)]]];
 
             return self::render($path === '/' ? 'home' : 'city', $ctx);
         }
         if ($car = self::cars()->where('legacy_path', $path)->with(['prices.translations', 'extra_specs.translations'])->first()) {
             $selected = $r->attributes->get('selected_city');
             $city = $selected && $car->cities->contains('id', $selected->id) ? $selected : $car->cities->firstWhere('active', true);
-            $ctx = ['car' => $car, 'city' => $city, 'seo' => Seo::page($car), 'related_cars' => self::cars()->when($car->category_id, fn ($query) => $query->where('category_id', $car->category_id))->where('id', '!=', $car->id)->when($city, fn ($query) => $query->whereHas('cities', fn ($cities) => $cities->where('locations_city.id', $city->id)))->limit(3)->get(), 'faqs' => self::faqs()->where('car_id', $car->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url($city)], [localized($car, 'name'), language_url($path)]], 'booking_form' => new PublicForm('booking', ['city' => $city?->id, 'car' => $car->id, 'source_token' => BookingController::token($path)]), 'car_whatsapp_message' => str_replace('%(car)s', localized($car, 'name'), site_text('Здравствуйте! Интересует аренда %(car)s.'))];
+            $ctx = ['car' => $car, 'city' => $city, 'seo' => Seo::page($car), 'related_cars' => self::cars()->when($car->category_id, fn ($query) => $query->where('category_id', $car->category_id))->where('id', '!=', $car->id)->when($city, fn ($query) => $query->whereHas('cities', fn ($cities) => $cities->where('locations_city.id', $city->id)))->limit(3)->get(), 'faqs' => self::faqs()->where('car_id', $car->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url($city)], [localized($car, 'name'), language_url($path)]], 'car_whatsapp_message' => str_replace('%(car)s', localized($car, 'name'), site_text('Здравствуйте! Интересует аренда %(car)s.'))];
 
             return self::render('car_detail', $ctx);
         }
@@ -117,7 +119,6 @@ class SiteController extends Controller
             $ctx = ['page' => $page, 'seo' => Seo::page($page), 'faqs' => self::faqs()->where('page_id', $page->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [localized($page, 'title'), language_url($path)]]];
             if ($page->slug === 'contacts') {
                 $ctx['city'] = $r->attributes->get('selected_city');
-                $ctx['form'] = new PublicForm('callback', ['city' => $ctx['city']?->id, 'source_token' => BookingController::token($path)]);
             }
 
             return self::render('page', $ctx);
@@ -127,6 +128,27 @@ class SiteController extends Controller
         }
 
         return $this->missing();
+    }
+
+    /**
+     * Price filters and price sorting use the advertised "from" price, which depends on discounts and so is applied after loading.
+     *
+     * @param  Collection<int, Car>  $cars
+     * @return Collection<int, Car>
+     */
+    private static function filterAndSortByFromPrice(Collection $cars, Request $r): Collection
+    {
+        if ($r->filled('min_price')) {
+            $cars = $cars->filter(fn (Car $car): bool => $car->fromPrice() >= (int) $r->min_price);
+        }
+        if ($r->filled('max_price')) {
+            $cars = $cars->filter(fn (Car $car): bool => $car->fromPrice() <= (int) $r->max_price);
+        }
+        if (in_array($r->sort, ['price', '-price'], true)) {
+            $cars = $cars->sortBy([fn (Car $a, Car $b): int => ($a->fromPrice() <=> $b->fromPrice()) * ($r->sort === 'price' ? 1 : -1), fn (Car $a, Car $b): int => $a->id <=> $b->id]);
+        }
+
+        return $cars->values();
     }
 
     public function missing(): Response
@@ -160,7 +182,7 @@ class SiteController extends Controller
             }if ($r->filled('category')) {
                 $q->whereHas('category', fn ($c) => $c->where('slug', $r->category));
             }
-            foreach (['min_price' => ['base_price', '>='], 'max_price' => ['base_price', '<='], 'seats' => ['seats', '>='], 'transmission' => ['transmission', '='], 'drive' => ['drive', '=']] as $key => [$col,$op]) {
+            foreach (['seats' => ['seats', '>='], 'transmission' => ['transmission', '='], 'drive' => ['drive', '=']] as $key => [$col,$op]) {
                 if ($r->filled($key)) {
                     $q->where($col, $op, $r->$key);
                 }
@@ -169,10 +191,13 @@ class SiteController extends Controller
             }if ($r->filled('q')) {
                 $q->where(fn ($c) => $c->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($r->q).'%'])->orWhereRaw('LOWER(model_name) LIKE ?', ['%'.mb_strtolower($r->q).'%'])->orWhereHas('brand', fn ($b) => $b->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($r->q).'%'])));
             }
-            if (in_array($r->sort, ['price', '-price', 'new'])) {
-                $q->reorder()->orderBy($r->sort === 'new' ? 'created_at' : 'base_price', $r->sort === 'price' ? 'asc' : 'desc')->orderBy('id');
+            if ($r->sort === 'new') {
+                $q->reorder()->orderBy('created_at', 'desc')->orderBy('id');
             }
         }$cars = $q->get();
+        if (! $errors) {
+            $cars = self::filterAndSortByFromPrice($cars, $r);
+        }
         $ctx = ['seo' => Seo::page($cat, title: site_text('Автопарк | LEGIONAUTORENT'), description: site_text('Выберите автомобиль для аренды без водителя. Цены, фотографии и классы автомобилей в LEGIONAUTORENT.'), h1: site_text('Ваш маршрут. Ваш автомобиль.'), noindex: collect($r->only(array_keys($rules)))->contains(fn ($value) => filled($value)), languages: $cat ? null : Seo::catalogLanguages()), 'city' => $catalogCity, 'category' => $cat, 'cars' => $cars, 'car_count' => $cars->count(), 'filter_form' => new PublicForm('filter', array_replace(['city' => $cityFilter], $r->query()), $errors), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url()]]];
         if ($r->header('X-Legion-Partial') === 'catalog') {
             return self::render('components.catalog_results', $ctx)->header('X-Legion-Selected-City', $r->attributes->get('selected_city')?->slug ?? '')->header('X-Legion-Home', home_url())->header('X-Legion-Robots', $ctx['seo']['robots']);

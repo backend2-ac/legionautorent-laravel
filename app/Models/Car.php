@@ -11,7 +11,7 @@ class Car extends CmsModel
 {
     protected $table = 'cars_car';
 
-    protected $casts = ['legacy_meta' => 'array', 'created_at' => 'datetime', 'updated_at' => 'datetime', 'base_price' => 'decimal:0', 'year' => 'integer', 'seats' => 'integer', 'doors' => 'integer', 'deposit' => 'decimal:0', 'mileage_limit' => 'integer', 'active' => 'boolean', 'featured' => 'boolean', 'accepts_requests' => 'boolean', 'sort_order' => 'integer'];
+    protected $casts = ['legacy_meta' => 'array', 'created_at' => 'datetime', 'updated_at' => 'datetime', 'base_price' => 'decimal:0', 'price_from' => 'decimal:0', 'year' => 'integer', 'seats' => 'integer', 'doors' => 'integer', 'deposit' => 'decimal:0', 'mileage_limit' => 'integer', 'active' => 'boolean', 'featured' => 'boolean', 'accepts_requests' => 'boolean', 'sort_order' => 'integer'];
 
     public function brand(): BelongsTo
     {
@@ -51,6 +51,19 @@ class Car extends CmsModel
     public function extra_specs(): HasMany
     {
         return $this->hasMany(CarSpecification::class, 'car_id')->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * The lowest advertised daily price: the manual value when set, otherwise the daily price minus the largest discount.
+     */
+    public function fromPrice(): int
+    {
+        if ($this->price_from !== null && (int) $this->price_from > 0) {
+            return (int) $this->price_from;
+        }
+        $discount = (int) ($this->discounts->max('percent') ?? 0);
+
+        return (int) round((int) $this->base_price * (100 - $discount) / 100);
     }
 
     public function scopePublic(Builder $q): Builder

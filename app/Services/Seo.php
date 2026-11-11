@@ -96,7 +96,7 @@ class Seo
             $result[] = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => array_map(fn ($b, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $b[0], 'item' => $root.$b[1]], $ctx['breadcrumbs'], array_keys($ctx['breadcrumbs']))];
         }
         if ($car) {
-            $offer = ['@type' => 'Offer', 'url' => $seo['canonical'], 'price' => (string) $car->base_price, 'priceCurrency' => 'KZT', 'priceSpecification' => ['@type' => 'UnitPriceSpecification', 'price' => (string) $car->base_price, 'priceCurrency' => 'KZT', 'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitCode' => 'DAY']]];
+            $offer = ['@type' => 'Offer', 'url' => $seo['canonical'], 'price' => (string) $car->fromPrice(), 'priceCurrency' => 'KZT', 'priceSpecification' => ['@type' => 'UnitPriceSpecification', 'price' => (string) $car->fromPrice(), 'priceCurrency' => 'KZT', 'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitCode' => 'DAY']]];
             $vehicle = ['@context' => 'https://schema.org', '@type' => ['Vehicle', 'Product'], 'name' => localized($car, 'name'), 'url' => $seo['canonical'], 'offers' => $offer];
             if ($car->brand) {
                 $vehicle['brand'] = ['@type' => 'Brand', 'name' => $car->brand->name];

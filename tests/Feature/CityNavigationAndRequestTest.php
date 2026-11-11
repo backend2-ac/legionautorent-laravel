@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\BookingController;
-use App\Models\BookingRequest;
-use App\Models\Car;
 use App\Models\City;
 use Tests\CatalogueTestCase;
 
@@ -54,35 +51,6 @@ class CityNavigationAndRequestTest extends CatalogueTestCase
         }
     }
 
-    public function test_public_request_forms_have_no_dates_and_submission_stores_a_dateless_lead(): void
-    {
-        $this->artisan('legion:publish-locales')->assertSuccessful();
-        $car = Car::public()->where('accepts_requests', true)->first();
-        foreach (['', '/kk', '/en'] as $prefix) {
-            foreach ([$car->legacy_path, '/booking/', '/contacts/'] as $path) {
-                $this->get($prefix.$path)->assertOk()->assertDontSee('name="start_date"', false)->assertDontSee('name="end_date"', false)->assertSee('data-request-feedback-title', false)->assertSee('data-request-feedback-message', false);
-            }
-        }
-        $this->postJson('/booking/', ['name' => 'Проверка без дат', 'phone' => '+77001112233', 'city' => $car->cities->first()->id, 'car' => $car->id, 'consent' => 'on', 'source_token' => BookingController::token($car->legacy_path)])
-            ->assertOk()->assertJsonPath('success', true)->assertJsonPath('detail', 'Менеджер свяжется с вами для уточнения деталей.');
-        $lead = BookingRequest::firstOrFail();
-        $this->assertNull($lead->start_date);
-        $this->assertNull($lead->end_date);
-        $this->assertSame(BookingController::CONSENT, $lead->consent_text);
-        $this->assertStringNotContainsString('дат аренды', $lead->consent_text);
-    }
-
-    public function test_legacy_date_errors_remain_clear_and_translated_for_older_clients(): void
-    {
-        $city = City::first();
-        $messages = ['' => ['Дата получения не может быть в прошлом.', 'Дата возврата должна быть позже даты получения.'], '/kk' => ['Көлікті алу күні өткен күн болмауы керек.', 'Көлікті қайтару күні алу күнінен кейін болуы керек.'], '/en' => ['The pickup date cannot be in the past.', 'The return date must be later than the pickup date.']];
-        foreach ($messages as $prefix => [$startError, $endError]) {
-            $response = $this->postJson($prefix.'/booking/', ['name' => 'Тест', 'phone' => '+77001112233', 'city' => $city->id, 'consent' => 'on', 'source_token' => BookingController::token('/cars/'), 'start_date' => now()->subDays(2)->toDateString(), 'end_date' => now()->subDays(3)->toDateString()]);
-            $response->assertStatus(400)->assertJsonPath('errors.start_date.0', $startError)->assertJsonPath('errors.end_date.0', $endError)->assertDontSee('validation.after');
-        }
-        $this->assertSame(0, BookingRequest::count());
-    }
-
     public function test_conditions_keep_cms_text_with_an_aligned_reading_block(): void
     {
         $this->artisan('legion:publish-locales')->assertSuccessful();
@@ -94,16 +62,6 @@ class CityNavigationAndRequestTest extends CatalogueTestCase
             @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$response->getContent());
             $this->assertSame(5, (new \DOMXPath($dom))->query('//div[@class="page-copy"]/h2')->length);
         }
-    }
-
-    public function test_phone_mask_is_present_and_incomplete_kazakhstan_numbers_are_rejected(): void
-    {
-        $city = City::first();
-        foreach (['' => 'Введите номер полностью: +7 (XXX) XXX-XX-XX.', '/kk' => 'Нөмірді толық енгізіңіз: +7 (XXX) XXX-XX-XX.', '/en' => 'Enter the full number: +7 (XXX) XXX-XX-XX.'] as $prefix => $error) {
-            $this->get($prefix.'/booking/')->assertOk()->assertSee('data-phone-mask', false)->assertSee('inputmode="tel"', false)->assertSee('placeholder="+7 (___) ___-__-__"', false);
-            $this->postJson($prefix.'/booking/', ['name' => 'Тест', 'phone' => '+7 (701) 234-56-7', 'city' => $city->id, 'consent' => 'on', 'source_token' => BookingController::token('/cars/')])->assertStatus(400)->assertJsonPath('errors.phone.0', $error);
-        }
-        $this->assertSame(0, BookingRequest::count());
     }
 
     private function cityLink(string $html, string $slug): string

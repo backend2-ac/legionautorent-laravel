@@ -27,6 +27,8 @@ export function initMercedesPreview(root){
     if(jpeg)return 'jpeg';
     if(navigator.connection?.saveData)return compact.matches?'mobile':'desktop';
     const portrait=innerHeight>innerWidth;
+    // A square/vertical master fills phones without the empty bands of a 16:9 strip.
+    if(portrait&&data.portrait)return 'portrait';
     const displayedWidth=portrait?innerWidth:Math.max(innerWidth,innerHeight*16/9);
     const pixels=displayedWidth*Math.min(devicePixelRatio||1,2);
     return pixels>1280&&data.fullhd?'fullhd':pixels>768?'desktop':'mobile';
@@ -294,7 +296,7 @@ export function initMercedesPreview(root){
 
     if(recovery)recovery.hidden=true;delete root.dataset.failure;
     enabled=true;shown=0;root.dataset.variant=variantName();root.dataset.format=jpeg?'jpeg':'webp';
-    const previewSource=data.preview?.[jpeg?'jpeg':'webp'];
+    const previewSource=data.preview?.[jpeg?'jpeg':(variantName()==='portrait'&&data.preview?.portrait?'portrait':'webp')];
     preview=createHeroPreview(previewSource?{...previewSource,mime:jpeg?'image/jpeg':'image/webp'}:null,{
       decode,changed:schedule,settled:()=>{if(enabled){hdReady=true;prepareFrames(Math.round(shown*(data.count-1)));pumpFetches();}}
     });

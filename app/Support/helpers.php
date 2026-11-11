@@ -108,6 +108,19 @@ function car_discount(Car $car): int
 {
     return $car->discounts->max('percent') ?? 0;
 }
+/**
+ * "от 45 000 ₸" with the word placed as each language expects (Kazakh puts «бастап» after the amount).
+ */
+function price_from(mixed $amount): HtmlString
+{
+    $money = '<strong>'.e(df($amount, 'money')).' <span>₸</span></strong>';
+    $lang = app()->getLocale();
+    if ($lang === 'kk') {
+        return new HtmlString($money.' <small class="price-from">бастап</small>');
+    }
+
+    return new HtmlString('<small class="price-from">'.($lang === 'en' ? 'from' : 'от').'</small> '.$money);
+}
 function home_url(?string $lang = null): string
 {
     return language_url(request()->attributes->get('selected_city')?->legacy_path ?? '/', $lang);

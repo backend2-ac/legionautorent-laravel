@@ -85,6 +85,9 @@ class CmsModel extends Model
         if ($key === 'get_absolute_url') {
             return $this->getAbsoluteUrl();
         }
+        if ($key === 'from_price') {
+            return $this instanceof Car ? $this->fromPrice() : null;
+        }
         if ($key === 'main_image') {
             return $this instanceof Car ? $this->images->first() : null;
         }

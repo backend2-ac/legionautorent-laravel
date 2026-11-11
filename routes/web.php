@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
@@ -38,10 +37,5 @@ Route::get('/video/video-2.mp4', function () {
 
     return response()->file($p, ['Content-Type' => 'video/mp4']);
 });
-foreach (['', 'kk/', 'en/'] as $prefix) {
-    foreach (['booking/', 'callback/'] as $path) {
-        Route::post('/'.$prefix.$path, [BookingController::class, 'store']);
-    }
-}
 Route::get('/', SiteController::class);
 Route::fallback(SiteController::class);

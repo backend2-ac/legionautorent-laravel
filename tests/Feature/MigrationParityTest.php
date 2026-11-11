@@ -44,11 +44,14 @@ class MigrationParityTest extends CatalogueTestCase
 
     public function test_all_auxiliary_pages_and_locale_fallbacks_are_usable(): void
     {
-        foreach (['/cars/astana/', '/contacts/', '/privacy/', '/consent/', '/rental-conditions/', '/faq/', '/booking/', '/callback/', '/request-success/', '/kk/', '/en/', '/kk/cars/astana/', '/en/contacts/'] as $path) {
+        foreach (['/cars/astana/', '/contacts/', '/privacy/', '/consent/', '/rental-conditions/', '/faq/', '/kk/', '/en/', '/kk/cars/astana/', '/en/contacts/'] as $path) {
             $this->get($path)->assertOk();
         }
         $this->get('/kk/')->assertSee('content="noindex,follow"', false)->assertDontSee('hreflang="kk"', false);
         $this->get('/en/')->assertDontSee('hreflang="en"', false);
+        foreach (['/booking/' => '/contacts/', '/callback/' => '/contacts/', '/kk/callback/' => '/kk/contacts/', '/request-success/' => '/'] as $old => $target) {
+            $this->get($old)->assertRedirect($target)->assertStatus(301);
+        }
         $this->get('/kz/')->assertNotFound();
         $this->get('/missing-legacy-page/')->assertNotFound();
         foreach (json_decode(file_get_contents(resource_path('data/legacy-500-paths.json')), true) as $path) {
