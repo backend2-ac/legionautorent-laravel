@@ -1470,6 +1470,10 @@
           [
             "condition",
             "Условие аренды"
+          ],
+          [
+            "reel",
+            "Видеоотзыв (Instagram)"
           ]
         ],
         "editable": true
@@ -1498,7 +1502,7 @@
         "primary": false,
         "max_length": null,
         "label": "Текст",
-        "help": "",
+        "help": "Для видеоотзыва вставьте ссылку на рилс Instagram, например https://www.instagram.com/reel/…/. Заголовок — подпись под видео.",
         "choices": [],
         "editable": true
       },
@@ -1691,6 +1695,10 @@
           [
             "about",
             "О компании"
+          ],
+          [
+            "reviews",
+            "Видеоотзывы"
           ],
           [
             "seo",

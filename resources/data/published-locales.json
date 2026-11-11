@@ -7476,8 +7476,8 @@
       "object": 11,
       "language": "kk",
       "fields": {
-        "title": "Кепілдік төлем және шектеулер",
-        "content": "Шартқа қол қоймас бұрын жас, жүргізу өтілі, кепілдік төлем, жүріс шегі және сапар аумағын менеджерден нақтылаңыз."
+        "title": "Жас, кепіл және жүріс",
+        "content": "Жалға алушы — 21 жастан, өтілі — 3 жылдан. Кепіл үлгіге байланысты, жүріс — тәулігіне 250 км-ге дейін."
       }
     },
     {
@@ -7485,8 +7485,8 @@
       "object": 11,
       "language": "en",
       "fields": {
-        "title": "Deposit and restrictions",
-        "content": "Confirm age, driving experience, deposit, mileage allowance and travel area with our manager before signing."
+        "title": "Age, deposit and mileage",
+        "content": "Renter aged 21+, with 3+ years of driving. The deposit depends on the model; mileage up to 250 km per day."
       }
     },
     {
@@ -7738,7 +7738,7 @@
         "title": "Жалдау шарттары | LEGIONAUTORENT",
         "description": "Сапар басталғанға дейін білу қажет мәліметтер.",
         "h1": "Жалдау шарттары",
-        "content": "<h2>Құжаттар</h2><p>Жалға алу үшін жүргізуші куәлігі мен жеке куәлік қажет.</p><h2>Жас, жүргізу өтілі және кепілдік төлем</h2><p>Таңдаған көлікке қатысты жас пен жүргізу өтіліне қойылатын талаптарды, кепілдік төлем мөлшерін және төлем әдісін шарт жасалғанға дейін менеджермен келісіңіз.</p><h2>Мерзім және баға</h2><p>Негізгі тариф пен жеңілдіктер әр автокөліктің бетінде көрсетілген. Соңғы баға келісілген мерзім мен шарттарға байланысты. Жеңілдік мерзімдерінің шекарасын менеджер растайды.</p><h2>Алу және қайтару</h2><p>Алу және қайтару уақыты мен орны алдын ала келісіледі. Жеткізу мүмкіндігін және бағасын өтінім рәсімдеу кезінде нақтылаңыз.</p><h2>Шектеулер</h2><p>Автокөліктер такси және жеткізу қызметінде жұмыс істеуге берілмейді. Шартқа қол қоймас бұрын жүріс шегін, сапар аумағын, қосымша қызметтерді және басқа талаптарды нақтылаңыз.</p>",
+        "content": "<h2>Жас және өтіл</h2><ul><li>Жалға алушы кемінде 21 жаста болуы керек.</li><li>Жүргізу өтілі — 3 жылдан бастап.</li></ul><h2>Құжаттар</h2><ul><li>Жеке куәлік немесе төлқұжат.</li><li>Жүргізуші куәлігі.</li></ul><h2>Төлем</h2><ul><li>Қолма-қол немесе қолма-қолсыз аударым арқылы.</li><li>Жалдау ақысы сапар басталғанға дейін төленеді.</li></ul><h2>Кепіл</h2><ul><li>Кепіл сомасы көлік үлгісіне байланысты.</li><li>Кепіл көлік қайтарылғаннан кейін бірден қайтарылады.</li><li>Көлікті беру және қайтару қабылдау-тапсыру актісімен рәсімделеді.</li></ul><h2>Жүріс</h2><ul><li>Тәулігіне 250 км-ге дейін.</li><li>Қала сыртына шығу бөлек төленеді.</li><li>Артық жүріс — көлікке байланысты бір километрге 80-нен 200 ₸-ге дейін.</li></ul><h2>Сақтандыру</h2><ul><li>Әр көлік МАЖС (ОГПО) бойынша сақтандырылған.</li><li>Көлікті тек жалға алушы басқара алады.</li></ul><h2>Жалдау мерзімі</h2><ul><li>Мерзім қабылдау-тапсыру актісіне қол қойылған сәттен басталады.</li><li>Көлікті мерзім аяқталғаннан кейін бір сағаттан кешіктірмей қайтару керек; кешіккені үшін сағаттық ақы алынады.</li></ul><h2>Жеткізу және 24/7 қолдау</h2><ul><li>Көлікті қаланың кез келген нүктесінде беру және қабылдау жалдау бағасына кіреді.</li><li>Көлік беру және қолдау тәулік бойы, демалыссыз жұмыс істейді.</li></ul><h2>Шектеулер</h2><ul><li>Көліктер такси және жеткізу жұмысына берілмейді.</li></ul>",
         "intro": "Сапар басталғанға дейін білу қажет мәліметтер."
       }
     },
@@ -7751,7 +7751,7 @@
         "title": "Rental terms | LEGIONAUTORENT",
         "description": "What you need to know before your journey.",
         "h1": "Rental terms",
-        "content": "<h2>Documents</h2><p>A driving licence and an identity document are required.</p><h2>Age, driving experience and deposit</h2><p>Before signing, confirm the age and driving experience requirements, deposit amount and payment method for your selected vehicle with our manager.</p><h2>Rental period and price</h2><p>The base rate and discounts are published on each vehicle page. The final price depends on the agreed period and terms. Our manager will confirm the discount-period boundaries.</p><h2>Pickup and return</h2><p>The pickup and return time and location are agreed in advance. Ask about delivery availability and cost when submitting your request.</p><h2>Restrictions</h2><p>Cars are not rented for taxi or delivery work. Confirm the mileage allowance, travel area, additional services and other conditions before signing the agreement.</p>",
+        "content": "<h2>Age and experience</h2><ul><li>The renter must be at least 21 years old.</li><li>At least 3 years of driving experience.</li></ul><h2>Documents</h2><ul><li>ID card or passport.</li><li>Driving licence.</li></ul><h2>Payment</h2><ul><li>Cash or bank transfer.</li><li>The rental is paid before the trip starts.</li></ul><h2>Deposit</h2><ul><li>The deposit depends on the car model.</li><li>The deposit is returned as soon as the car is returned.</li><li>Handover and return are recorded in a handover certificate.</li></ul><h2>Mileage</h2><ul><li>Up to 250 km per day.</li><li>Trips outside the city are charged separately.</li><li>Extra mileage costs 80 to 200 KZT per kilometre depending on the car.</li></ul><h2>Insurance</h2><ul><li>Every car has compulsory third-party liability insurance (OGPO).</li><li>Only the renter may drive the car.</li></ul><h2>Rental period</h2><ul><li>The rental starts when the handover certificate is signed.</li><li>Return the car no later than one hour after the rental ends; late returns are charged by the hour.</li></ul><h2>Delivery and 24/7 support</h2><ul><li>Delivery and return anywhere in the city are included in the rental price.</li><li>Car handover and support work around the clock, with no days off.</li></ul><h2>Restrictions</h2><ul><li>Cars are not rented for taxi or delivery work.</li></ul>",
         "intro": "What you need to know before your journey."
       }
     },

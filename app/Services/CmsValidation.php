@@ -10,6 +10,7 @@ use App\Models\CarImage;
 use App\Models\CarPrice;
 use App\Models\City;
 use App\Models\CmsModel;
+use App\Models\ContentBlock;
 use App\Models\ContentType;
 use App\Models\MenuLink;
 use App\Models\Page;
@@ -45,6 +46,22 @@ class CmsValidation
         $hosts = array_filter([parse_url((string) config('legion.site_url'), PHP_URL_HOST), parse_url((string) config('app.url'), PHP_URL_HOST), 'legionautorent.kz']);
 
         return in_array(parse_url($canonical, PHP_URL_HOST), $hosts, true) && parse_url($canonical, PHP_URL_PATH) === $path && ! parse_url($canonical, PHP_URL_QUERY);
+    }
+
+    /**
+     * Canonical https://www.instagram.com/{reel|p|tv}/{id}/ for a pasted reel or post link, or null when it is not one.
+     */
+    public static function instagramPermalink(string $value): ?string
+    {
+        $parts = parse_url(trim($value));
+        if (($parts['scheme'] ?? '') !== 'https' || ! in_array($parts['host'] ?? '', ['instagram.com', 'www.instagram.com'], true)) {
+            return null;
+        }
+        if (! preg_match('#^/(reel|reels|p|tv)/([A-Za-z0-9_-]+)/?#', $parts['path'] ?? '', $match)) {
+            return null;
+        }
+
+        return 'https://www.instagram.com/'.($match[1] === 'reels' ? 'reel' : $match[1]).'/'.$match[2].'/';
     }
 
     public static function rangesOverlap(int $from, int $to, int $otherFrom, int $otherTo): bool
@@ -164,6 +181,13 @@ class CmsValidation
             }if (Redirect::where('active', true)->where('id', '!=', $m->id ?? 0)->where(fn ($q) => $q->where('old_path', $m->new_path)->orWhere('new_path', $m->old_path))->exists()) {
                 self::fail('new_path', 'Цепочки и циклы запрещены.');
             }
+        }
+        if ($m instanceof ContentBlock && $m->kind === 'reel') {
+            $permalink = self::instagramPermalink((string) $m->text);
+            if ($permalink === null) {
+                self::fail('text', 'Вставьте ссылку на рилс или пост Instagram, например https://www.instagram.com/reel/…/');
+            }
+            $m->text = $permalink;
         }
         if ($m instanceof MenuLink && ! self::exists($m->path)) {
             self::fail('path', 'Укажите существующую страницу сайта.');

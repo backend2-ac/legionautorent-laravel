@@ -46,7 +46,7 @@ class PublicContext
         $response = $next($r);
         if (! $private) {
             $nonce = $r->attributes->get('nonce');
-            $policy = ["default-src 'self'", "script-src 'self' 'nonce-{$nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://mc.yandex.ru", "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob: https://mc.yandex.ru https://www.google-analytics.com", "font-src 'self'", "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://mc.yandex.ru", 'frame-src https://yandex.ru https://www.googletagmanager.com', "media-src 'self' blob:", "worker-src 'self' blob:", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"];
+            $policy = ["default-src 'self'", "script-src 'self' 'nonce-{$nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://mc.yandex.ru https://www.instagram.com", "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob: https://mc.yandex.ru https://www.google-analytics.com", "font-src 'self'", "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://mc.yandex.ru", 'frame-src https://yandex.ru https://www.googletagmanager.com https://www.instagram.com', "media-src 'self' blob:", "worker-src 'self' blob:", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"];
             $response->headers->set('Content-Security-Policy', implode('; ', $policy));
         }
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');

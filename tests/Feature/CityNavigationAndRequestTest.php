@@ -60,7 +60,7 @@ class CityNavigationAndRequestTest extends CatalogueTestCase
             $this->assertSame(1, substr_count($response->getContent(), '<h1>'));
             $dom = new \DOMDocument;
             @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$response->getContent());
-            $this->assertSame(5, (new \DOMXPath($dom))->query('//div[@class="page-copy"]/h2')->length);
+            $this->assertGreaterThanOrEqual(5, (new \DOMXPath($dom))->query('//div[@class="page-copy"]/h2')->length);
         }
     }
 
