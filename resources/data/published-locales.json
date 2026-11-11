@@ -7314,8 +7314,8 @@
       "object": 2,
       "language": "kk",
       "fields": {
-        "title": "Жылдам рәсімдеу",
-        "content": "Көлікті таңдаңыз, өтінім қалдырыңыз және менеджермен мәліметтерді келісіңіз."
+        "title": "Тәулік бойы жұмыс істейміз",
+        "content": "Демалыс пен мерекесіз: көлікті сізге ыңғайлы уақытта береміз және қабылдаймыз."
       }
     },
     {
@@ -7323,8 +7323,8 @@
       "object": 2,
       "language": "en",
       "fields": {
-        "title": "Quick arrangements",
-        "content": "Choose a car, send a request and agree the details with our manager."
+        "title": "Open 24/7",
+        "content": "No days off or holidays: we hand over and take back the car whenever suits you."
       }
     },
     {
@@ -7332,8 +7332,8 @@
       "object": 3,
       "language": "kk",
       "fields": {
-        "title": "Автокөлікті жеткізу",
-        "content": "Көлікті қалаңыздағы ыңғайлы жерден алуды менеджермен келісіңіз."
+        "title": "Тегін жеткізу",
+        "content": "Көлікті қаланың кез келген нүктесіне жеткізіп, сол жерден қабылдаймыз — бұл жалдау бағасына кіреді."
       }
     },
     {
@@ -7341,8 +7341,8 @@
       "object": 3,
       "language": "en",
       "fields": {
-        "title": "Vehicle delivery",
-        "content": "Arrange pickup at a convenient point in your city with our manager."
+        "title": "Free delivery",
+        "content": "We deliver and collect the car anywhere in the city — it is included in the rental price."
       }
     },
     {
@@ -7495,7 +7495,7 @@
       "language": "kk",
       "fields": {
         "title": "Алу және қайтару",
-        "content": "Көлікті алу және қайтару уақыты мен орнын менеджермен келісіңіз."
+        "content": "Көлікті қаланың кез келген нүктесінде беру және қабылдау жалдау бағасына кіреді. Уақытын менеджермен келісіңіз."
       }
     },
     {
@@ -7504,7 +7504,7 @@
       "language": "en",
       "fields": {
         "title": "Pickup and return",
-        "content": "Agree the pickup and return time and location with our manager."
+        "content": "Delivery and return anywhere in the city are included in the rental price. Agree the time with the manager."
       }
     },
     {
@@ -7512,8 +7512,8 @@
       "object": 13,
       "language": "kk",
       "fields": {
-        "title": "Бізге қоңырау шалыңыз",
-        "content": "Сайтта таңдаған автокөлікті брондау үшін қоңырау шалыңыз."
+        "title": "Жазыңыз немесе қоңырау шалыңыз",
+        "content": "WhatsApp-қа жазыңыз немесе қоңырау шалыңыз — күндеріңізге көлік таңдап береміз."
       }
     },
     {
@@ -7521,8 +7521,8 @@
       "object": 13,
       "language": "en",
       "fields": {
-        "title": "Call us",
-        "content": "Call to request the vehicle you chose on the website."
+        "title": "Message or call us",
+        "content": "Message us on WhatsApp or call — we will pick a car for your dates."
       }
     },
     {
@@ -7531,7 +7531,7 @@
       "language": "kk",
       "fields": {
         "title": "Автокөлікті алыңыз",
-        "content": "Көлікті қалаңыздың кез келген жеріне жеткізу."
+        "content": "Көлікті қаланың кез келген нүктесіне тегін жеткіземіз."
       }
     },
     {
@@ -7540,7 +7540,7 @@
       "language": "en",
       "fields": {
         "title": "Receive your car",
-        "content": "Vehicle delivery to any point in your city."
+        "content": "We deliver the car free of charge anywhere in the city."
       }
     },
     {
@@ -7567,7 +7567,7 @@
       "language": "kk",
       "fields": {
         "title": "Автокөлікті қалай брондауға болады?",
-        "content": "Көлікті таңдап, телефон нөмірі мен қалаған күндерді көрсетіп өтінім жіберіңіз. Менеджер сізге хабарласып, қолжетімділікті және шарттарды нақтылайды. Өтінімнің өзі брондауды растамайды."
+        "content": "Көлікті таңдап, бізге WhatsApp-қа жазыңыз немесе қоңырау шалыңыз. Менеджер көліктің сіздің күндеріңізге бос екенін және жалдау шарттарын нақтылайды. Брондау менеджермен келіскеннен кейін расталады."
       }
     },
     {
@@ -7576,7 +7576,7 @@
       "language": "en",
       "fields": {
         "title": "How do I book a car?",
-        "content": "Choose a car and send a request with your phone number and preferred dates. Our manager will contact you to confirm availability and terms. A request by itself is not a confirmed booking."
+        "content": "Choose a car and message us on WhatsApp or call. Our manager will confirm availability for your dates and the rental terms. The booking is confirmed once agreed with the manager."
       }
     },
     {
@@ -7639,7 +7639,7 @@
       "language": "kk",
       "fields": {
         "title": "Автокөлікті жеткізумен алуға бола ма?",
-        "content": "Өтінім рәсімдеу кезінде алу орнын және жеткізу мүмкіндігін менеджермен келісіңіз."
+        "content": "Иә. Көлікті қаланың кез келген нүктесінде беру және қабылдау жалдау бағасына кіреді. Уақыты мен мекенжайын менеджермен келісіңіз."
       }
     },
     {
@@ -7648,7 +7648,7 @@
       "language": "en",
       "fields": {
         "title": "Can the car be delivered?",
-        "content": "Agree the pickup location and delivery availability with our manager when making your request."
+        "content": "Yes. Delivery and return anywhere in the city are included in the rental price. Agree the time and address with the manager."
       }
     },
     {
@@ -7657,10 +7657,10 @@
       "language": "kk",
       "fields": {
         "name": "LEGIONAUTORENT туралы",
-        "title": "LEGIONAUTORENT туралы | LEGIONAUTORENT",
-        "description": "Жоспарыңызға сай автокөлік.",
+        "title": "Компания туралы — Қазақстанда 8 жыл көлік жалдау | LEGIONAUTORENT",
+        "description": "LEGIONAUTORENT — 8 жыл жүргізушісіз көлік жалдау: Астанада, Қостанайда, Өскеменде және Павлодарда филиалдар, тәулік бойы жұмыс және қала ішінде тегін жеткізу.",
         "h1": "LEGIONAUTORENT туралы",
-        "content": "<h2>Жүргізушісіз автокөлік жалға алу</h2><p>LEGIONAUTORENT Астана, Қостанай, Өскемен және Павлодар қалаларында әртүрлі санаттағы автокөліктер ұсынады. Каталогта нақты фотосуреттерді, жалдау бағасын және ұзақ сапарларға арналған жеңілдіктерді көруге болады.</p><h2>Таңдау және рәсімдеу</h2><p>Автокөлікті таңдап, өтінім қалдырыңыз. Менеджер таңдаған күндердегі қолжетімділікті, бағаны, құжаттарды және шарт талаптарын нақтылайды. Көлікті алу мен жеткізуді алдын ала келісуге болады.</p><p><a href=\"/kk/cars/\">Автокөлік таңдау</a> · <a href=\"/kk/contacts/\">Бізбен байланысу</a></p>",
+        "content": "<h2>Жүргізушісіз көлік жалдауда 8 жыл</h2><p>LEGIONAUTORENT жалдау нарығында сегіз жыл жұмыс істеп келеді. Компанияның филиалдары Астанада, Қостанайда, Өскеменде және Павлодарда ашық, ал келісім бойынша көлікті Қазақстанның басқа қалаларына сапарға алуға болады. Каталогта нақты фотосуреттер, бағалар және ұзақ мерзімді жалдауға жеңілдіктер бар.</p><h2>Қалай жалға алуға болады</h2><p>Көлікті таңдап, бізге WhatsApp-қа жазыңыз немесе қоңырау шалыңыз. Менеджер көліктің сіздің күндеріңізге бос екенін, бағасын, құжаттарды және шарт талаптарын растайды. Біз тәулік бойы, демалыссыз жұмыс істейміз, ал көлікті қаланың кез келген нүктесінде беру және қабылдау жалдау бағасына кіреді.</p><p><a href=\"/kk/cars/\">Автокөлік таңдау</a> · <a href=\"/kk/contacts/\">Бізбен байланысу</a></p>",
         "intro": "Жоспарыңызға сай автокөлік."
       }
     },
@@ -7670,10 +7670,10 @@
       "language": "en",
       "fields": {
         "name": "About LEGIONAUTORENT",
-        "title": "About LEGIONAUTORENT | LEGIONAUTORENT",
-        "description": "A car for your plans.",
+        "title": "About us — 8 years of car rental in Kazakhstan | LEGIONAUTORENT",
+        "description": "LEGIONAUTORENT: 8 years of self-drive car rental with branches in Astana, Kostanay, Ust-Kamenogorsk and Pavlodar, open 24/7 with free delivery in the city.",
         "h1": "About LEGIONAUTORENT",
-        "content": "<h2>Self-drive car rental</h2><p>LEGIONAUTORENT offers vehicles in different classes in Astana, Kostanay, Ust-Kamenogorsk and Pavlodar. Browse the catalogue for actual vehicle photos, rental prices and discounts for longer journeys.</p><h2>Choosing and arranging your rental</h2><p>Choose a car and send a request. Our manager will confirm availability for your dates, prices, documents and agreement terms. Pickup and delivery can be arranged in advance.</p><p><a href=\"/en/cars/\">Choose a car</a> · <a href=\"/en/contacts/\">Contact us</a></p>",
+        "content": "<h2>8 years of self-drive car rental</h2><p>LEGIONAUTORENT has been in the car rental market for eight years. We have branches in Astana, Kostanay, Ust-Kamenogorsk and Pavlodar, and by arrangement you can take a car to other cities of Kazakhstan. The catalogue shows real photos, prices and discounts for longer rentals.</p><h2>How to rent</h2><p>Choose a car and message us on WhatsApp or call. A manager will confirm availability for your dates, the price, documents and contract terms. We work 24/7 with no days off, and delivery and return anywhere in the city are included in the rental price.</p><p><a href=\"/en/cars/\">Choose a car</a> · <a href=\"/en/contacts/\">Contact us</a></p>",
         "intro": "A car for your plans."
       }
     },
@@ -7843,8 +7843,8 @@
       "language": "kk",
       "fields": {
         "name": "Жалға алу туралы сұрақтар",
-        "title": "Жалға алу туралы сұрақтар | LEGIONAUTORENT",
-        "description": "Автокөлік жалдау туралы сұрақтарға жауаптар.",
+        "title": "Жүргізушісіз көлік жалдау туралы сұрақтар | LEGIONAUTORENT",
+        "description": "Жүргізушісіз көлік жалдау туралы жиі қойылатын сұрақтарға жауаптар: құжаттар, кепіл, көлікті жеткізу және төлем. Астана, Қостанай, Өскемен, Павлодар.",
         "h1": "Жалға алу туралы сұрақтар",
         "content": "<p>Автокөлік жалдау туралы сұрақтарға жауаптар.</p>"
       }
@@ -7855,8 +7855,8 @@
       "language": "en",
       "fields": {
         "name": "Rental questions",
-        "title": "Rental questions | LEGIONAUTORENT",
-        "description": "Answers to car rental questions.",
+        "title": "Self-drive car rental FAQ | LEGIONAUTORENT",
+        "description": "Answers to common questions about self-drive car rental: documents, deposit, car delivery and payment. Astana, Kostanay, Ust-Kamenogorsk, Pavlodar.",
         "h1": "Rental questions",
         "content": "<p>Answers to car rental questions.</p>"
       }

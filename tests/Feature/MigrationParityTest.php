@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Car;
 use App\Models\City;
 use App\Models\Translation;
+use App\Services\Seo;
 use Illuminate\Support\Facades\DB;
 use Tests\CatalogueTestCase;
 
@@ -37,7 +38,10 @@ class MigrationParityTest extends CatalogueTestCase
         $this->assertCount(95, $objects);
         foreach ($objects as $object) {
             $response = $this->get($object->legacy_path);
-            $response->assertOk()->assertSee('<title>'.e($object->seo_title).'</title>', false)->assertSee('content="'.e($object->seo_description).'"', false)->assertSee('href="'.e($object->canonical_url ?: config('legion.site_url').$object->legacy_path).'"', false)->assertSee(e($object->seo_h1), false);
+            [$title, $description] = $object instanceof Car
+                ? (Seo::carMeta($object, null, 'ru', (string) $object->seo_title, (string) $object->seo_description) ?? [$object->seo_title, $object->seo_description])
+                : [$object->seo_title, $object->seo_description];
+            $response->assertOk()->assertSee('<title>'.e($title).'</title>', false)->assertSee('content="'.e($description).'"', false)->assertSee('href="'.e($object->canonical_url ?: config('legion.site_url').$object->legacy_path).'"', false)->assertSee(e($object->seo_h1), false);
             $this->assertNull($response->headers->get('Location'));
         }
     }
