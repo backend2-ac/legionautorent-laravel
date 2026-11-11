@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminPasswordResetController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
@@ -26,6 +27,10 @@ Route::get('/healthz/', function () {
     } catch (Throwable) {
         return response()->json(['status' => 'unavailable'], 503);
     }
+});
+Route::middleware(['signed:relative', 'throttle:10,1'])->group(function (): void {
+    Route::get('/admin-password/{user}/{fingerprint}', [AdminPasswordResetController::class, 'show'])->name('admin.password-reset');
+    Route::post('/admin-password/{user}/{fingerprint}', [AdminPasswordResetController::class, 'update']);
 });
 Route::get('/robots.txt', [SeoController::class, 'robots']);
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
