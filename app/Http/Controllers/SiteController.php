@@ -124,7 +124,8 @@ class SiteController extends Controller
             return self::render('page', $ctx);
         }
         if ($red = Redirect::where('active', true)->where('old_path', $r->getPathInfo())->first()) {
-            return redirect($red->new_path, $red->status_code);
+            // RedirectResponse keeps the trailing slash; redirect() would strip it and land on a 404.
+            return new RedirectResponse($red->new_path, $red->status_code);
         }
 
         return $this->missing();

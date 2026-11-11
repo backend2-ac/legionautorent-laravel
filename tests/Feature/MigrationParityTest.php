@@ -64,7 +64,8 @@ class MigrationParityTest extends CatalogueTestCase
         }
         (require database_path('migrations/2026_11_11_193753_redirect_retired_car_urls.php'))->up();
         foreach ($retired as $path) {
-            $this->get($path)->assertStatus(301)->assertRedirect('/cars/astana/');
+            $location = $this->get($path)->assertStatus(301)->headers->get('Location');
+            $this->assertSame('/cars/astana/', parse_url($location, PHP_URL_PATH));
         }
         $this->get('/sitemap-cars.xml')->assertDontSee($retired[0]);
     }
