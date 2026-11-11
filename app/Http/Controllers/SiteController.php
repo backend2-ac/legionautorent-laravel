@@ -106,7 +106,12 @@ class SiteController extends Controller
             $cars = self::cars()->whereHas('cities', fn ($q) => $q->where('locations_city.id', $city->id))->get();
             $ctx = ['seo' => Seo::page($city), 'city' => $city, 'cars' => $cars, 'car_count' => $cars->count(), 'min_price' => $cars->min(fn (Car $car): int => $car->fromPrice()), 'steps' => self::blocks('step'), 'benefits' => self::blocks('benefit'), 'reels' => self::blocks('reel'), 'faqs' => self::faqs()->whereNull('car_id')->whereNull('page_id')->where(fn ($q) => $q->whereNull('city_id')->orWhere('city_id', $city->id))->get(), 'breadcrumbs' => $path === '/' ? [] : [[site_text('Главная').' — '.localized($city, 'name'), language_url($path)]]];
 
-            return self::render($path === '/' ? 'home' : 'city', $ctx);
+            $ctx['hero_film'] = Hero::context(PublicContent::all()['site'], $ctx['min_price'] ? (int) $ctx['min_price'] : null, $path === '/' ? null : trim(preg_replace(['/\s*\|.*$/u', '/,.*$/u'], '', localized($city, 'seo_title'))));
+            if ($path !== '/') {
+                $ctx['breadcrumbs'] = [];
+            }
+
+            return self::render('home', $ctx);
         }
         if ($car = self::cars()->where('legacy_path', $path)->with(['prices.translations', 'extra_specs.translations'])->first()) {
             $selected = $r->attributes->get('selected_city');

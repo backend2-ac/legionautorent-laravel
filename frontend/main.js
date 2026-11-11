@@ -4,6 +4,8 @@ import './mercedes-preview.css';
 import './refinements.css';
 import './city-navigation.css';
 import './hero-presentation.css';
+import './typography.css';
+import './motion.css';
 import {initPageMotion} from './page-motion.js';
 import {initGarageUI} from './night-garage.js';
 import {initPhoneMasks} from './phone-mask.js';

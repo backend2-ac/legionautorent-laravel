@@ -35,9 +35,10 @@ class FullscreenHeroAndNavigationTest extends CatalogueTestCase
             $dom = new \DOMDocument;
             @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$home->getContent());
             $xpath = new \DOMXPath($dom);
-            $this->assertSame(1, $xpath->query('//nav[@class="breadcrumbs container"]/ol/li')->length);
-            $this->assertSame(0, $xpath->query('//nav[@class="breadcrumbs container"]//a')->length);
-            $this->assertSame(1, $xpath->query('//nav[@class="breadcrumbs container"]//*[@aria-current="page"]')->length);
+            // A city home is a full banner page like Astana: no breadcrumb, the city in the banner.
+            $this->assertSame(0, $xpath->query('//nav[@class="breadcrumbs container"]')->length);
+            $this->assertSame(1, $xpath->query('//section[@data-mercedes-preview]')->length);
+            $this->assertSame(1, $xpath->query('//h1')->length);
             $home->assertDontSee('"@type":"BreadcrumbList"', false);
             foreach (['/contacts/', '/rental-conditions/', '/cars/kostanay/'] as $path) {
                 $page = $this->get($prefix.$path)->assertOk();

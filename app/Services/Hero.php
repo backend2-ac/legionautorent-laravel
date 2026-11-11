@@ -6,9 +6,13 @@ use App\Models\SiteSettings;
 
 class Hero
 {
-    public static function context(SiteSettings $site): array
+    /**
+     * Banner data; a city page passes its lowest "from" price and its own closing line.
+     */
+    public static function context(SiteSettings $site, ?int $minPrice = null, ?string $endTitle = null): array
     {
-        $defaults = ['ru' => ['от 20 000 ₸ / сутки', 'Работаем 24/7, без выходных · Подача и приём авто в любой точке города — входит в стоимость'], 'kk' => ['тәулігіне 20 000 ₸ бастап', 'Тәулік бойы, демалыссыз жұмыс істейміз · Көлікті қаланың кез келген нүктесіне жеткізу және қабылдау — бағаға кіреді'], 'en' => ['from 20 000 KZT per day', 'Open 24/7, no days off · Delivery and return anywhere in the city — included in the price']];
+        $price = number_format($minPrice ?? 20000, 0, '.', ' ');
+        $defaults = ['ru' => ['от '.$price.' ₸ / сутки', 'Работаем 24/7, без выходных · Подача и приём авто в любой точке города — входит в стоимость'], 'kk' => ['тәулігіне '.$price.' ₸ бастап', 'Тәулік бойы, демалыссыз жұмыс істейміз · Көлікті қаланың кез келген нүктесіне жеткізу және қабылдау — бағаға кіреді'], 'en' => ['from '.$price.' KZT per day', 'Open 24/7, no days off · Delivery and return anywhere in the city — included in the price']];
         $lang = app()->getLocale();
         $seq = [];
         if ($site->enable_hero_video && preg_match('#^/(static|media)/[a-zA-Z0-9_./-]+\.mp4$#', $site->hero_video_path) && ! str_contains($site->hero_video_path, '..')) {
@@ -36,7 +40,7 @@ class Hero
             $ending = $d['ending'] ?? $ending;
         }
 
-        return ['video' => $site->enable_hero_video ? $site->hero_video_path : '', 'poster' => $poster, 'mobile' => $mobilePoster, 'fallback_poster' => self::posterFallback($poster), 'fallback_mobile' => self::posterFallback($mobilePoster), 'ending' => $ending, 'sequence' => $seq, 'fps' => $seq['fps'] ?? $site->hero_video_fps, 'bytes' => $seq['desktop']['bytes'] ?? 0, 'width' => 1280, 'height' => 720, 'alt' => ['ru' => 'Чёрные внедорожники LEGIONAUTORENT под навесом с флагом Казахстана в Астане', 'kk' => 'Астанадағы Қазақстан туы бейнеленген шатыр астындағы LEGIONAUTORENT қара жол талғамайтын көліктері', 'en' => 'Black LEGIONAUTORENT SUVs under the Kazakhstan flag canopy in Astana'][$lang], 'hero_price_caption' => localized($site, 'hero_price_caption') ?: $defaults[$lang][0], 'hero_steps_caption' => localized($site, 'hero_steps_caption') ?: $defaults[$lang][1]];
+        return ['video' => $site->enable_hero_video ? $site->hero_video_path : '', 'poster' => $poster, 'mobile' => $mobilePoster, 'fallback_poster' => self::posterFallback($poster), 'fallback_mobile' => self::posterFallback($mobilePoster), 'ending' => $ending, 'sequence' => $seq, 'fps' => $seq['fps'] ?? $site->hero_video_fps, 'bytes' => $seq['desktop']['bytes'] ?? 0, 'width' => 1280, 'height' => 720, 'alt' => ['ru' => 'Чёрные внедорожники LEGIONAUTORENT под навесом с флагом Казахстана в Астане', 'kk' => 'Астанадағы Қазақстан туы бейнеленген шатыр астындағы LEGIONAUTORENT қара жол талғамайтын көліктері', 'en' => 'Black LEGIONAUTORENT SUVs under the Kazakhstan flag canopy in Astana'][$lang], 'hero_price_caption' => localized($site, 'hero_price_caption') ?: $defaults[$lang][0], 'hero_steps_caption' => localized($site, 'hero_steps_caption') ?: $defaults[$lang][1], 'end_title' => $endTitle ?: localized($site, 'hero_title')];
     }
 
     private static function posterFallback(?string $path): string

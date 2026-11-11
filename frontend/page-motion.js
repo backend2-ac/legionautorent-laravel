@@ -12,8 +12,9 @@ export function initPageMotion() {
   if (typeof window.IntersectionObserver!=='function' || !Element.prototype.animate) return () => {};
 
   initAmbientMotion();
-  const reduced = matchMedia('(prefers-reduced-motion: reduce), (hover: none), (pointer: coarse)');
-  const selector = '.car-card, .steps-grid > article, .benefits-grid, .contact-layout > div';
+  // Phones get the same light reveals; only the system "reduce motion" setting turns them off.
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const selector = '.car-card, .steps-grid > article, .benefits-grid > article, .contact-layout > div, .section-heading, .reviews-heading, .about-copy, .about-facts > div, .reel-card, .faq-list > details, .faq-intro, .partner-inner > div, .page-heading, .page-copy > *, .detail-section, .contact-request-layout > div, .footer-top > *';
   const observed = new Set();
   const seen = new WeakSet();
   const reveals = new Map();
@@ -43,14 +44,14 @@ export function initPageMotion() {
     let column = 0;
     for (const {element, rect} of positions) {
       if (Math.abs(rect.top - rowTop) > 12) {row++; rowTop = rect.top; column = 0;}
-      const isCard = element.matches('.car-card');
-      const isStep = element.matches('.steps-grid > article');
-      const delay = Math.min(140, row * 55 + column++ * (isStep ? 65 : 30));
+      const isCard = element.matches('.car-card, .reel-card');
+      const isStep = element.matches('.steps-grid > article, .benefits-grid > article, .about-facts > div');
+      const delay = Math.min(240, row * 60 + column++ * (isStep ? 80 : 50));
       // Individual translate composes with the card's existing hover transform.
       const animation = element.animate([
-        {opacity: isCard || isStep ? 0.65 : 0.82, translate: `0 ${isCard ? 12 : 8}px`},
+        {opacity: 0, translate: `0 ${isCard ? 22 : 16}px`},
         {opacity: 1, translate: '0 0'},
-      ], {duration: isCard ? 320 : 360, delay, easing: 'cubic-bezier(.2,.65,.3,1)', fill: 'backwards'});
+      ], {duration: isCard ? 560 : 620, delay, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards'});
       reveals.set(element, animation);
       animation.finished.then(() => {
         if (reveals.get(element) === animation) reveals.delete(element);
