@@ -37,6 +37,16 @@ class CmsValidation
         return in_array($p, ['/', '/cars/', '/faq/', '/booking/', '/callback/', '/request-success/']) || Car::where('legacy_path', $p)->public()->exists() || City::where('legacy_path', $p)->where('active', true)->exists() || Page::where('path', $p)->where('active', true)->exists() || CarCategory::where('slug', trim(str_replace('/category/', '', $p), '/'))->where('active', true)->exists();
     }
 
+    /**
+     * The canonical must point to the record's own path on this site; the host may be the staging or the production domain.
+     */
+    public static function isOwnCanonical(string $canonical, string $path): bool
+    {
+        $hosts = array_filter([parse_url((string) config('legion.site_url'), PHP_URL_HOST), parse_url((string) config('app.url'), PHP_URL_HOST), 'legionautorent.kz']);
+
+        return in_array(parse_url($canonical, PHP_URL_HOST), $hosts, true) && parse_url($canonical, PHP_URL_PATH) === $path && ! parse_url($canonical, PHP_URL_QUERY);
+    }
+
     public static function rangesOverlap(int $from, int $to, int $otherFrom, int $otherTo): bool
     {
         $commonBoundary = ($to === $otherFrom || $otherTo === $from) && $from !== $otherFrom;
@@ -108,7 +118,7 @@ class CmsValidation
                 }
             }
         }
-        if ($m->canonical_url && $m->canonical_url !== config('legion.site_url').$m->getAbsoluteUrl()) {
+        if ($m->canonical_url && ! self::isOwnCanonical((string) $m->canonical_url, $m->getAbsoluteUrl())) {
             self::fail('canonical_url', 'Canonical должен совпадать с собственным публичным URL.');
         }
         if ($m instanceof CarImage && $m->is_main && CarImage::where('car_id', $m->car_id)->where('is_main', true)->where('id', '!=', $m->id ?? 0)->exists()) {

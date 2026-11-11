@@ -14,6 +14,25 @@ use Tests\CatalogueTestCase;
 
 class CmsRulesTest extends CatalogueTestCase
 {
+    public function test_imported_production_canonicals_can_be_saved_on_staging(): void
+    {
+        config(['legion.site_url' => 'https://legionautorent.113.kz']);
+        $car = Car::public()->first();
+
+        $car->update(['canonical_url' => 'https://legionautorent.kz'.$car->legacy_path, 'seo_title' => 'Проверка сохранения']);
+        $car->update(['canonical_url' => 'https://legionautorent.113.kz'.$car->legacy_path]);
+        $this->assertSame('Проверка сохранения', $car->fresh()->seo_title);
+
+        foreach (['https://example.com'.$car->legacy_path, 'https://legionautorent.kz/another-page/', 'https://legionautorent.kz'.$car->legacy_path.'?utm=1'] as $foreign) {
+            try {
+                $car->update(['canonical_url' => $foreign]);
+                $this->fail('Foreign canonical was accepted: '.$foreign);
+            } catch (ValidationException) {
+                $this->assertNotSame($foreign, $car->fresh()->canonical_url);
+            }
+        }
+    }
+
     public function test_a_second_main_photo_is_rejected(): void
     {
         $photo = CarImage::where('is_main', false)->first();
