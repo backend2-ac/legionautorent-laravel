@@ -21,9 +21,12 @@ use Illuminate\Http\Response;
 
 class SiteController extends Controller
 {
+    /**
+     * Fleet order as on the old site: the most expensive car first; the admin sort order breaks ties.
+     */
     public static function cars(): Builder
     {
-        return Car::public()->with(['brand', 'category.translations', 'cities.translations', 'translations', 'images.translations', 'discounts'])->orderByDesc('featured')->orderBy('sort_order')->orderBy('id');
+        return Car::public()->with(['brand', 'category.translations', 'cities.translations', 'translations', 'images.translations', 'discounts'])->orderByDesc('base_price')->orderBy('sort_order')->orderBy('id');
     }
 
     public static function blocks(string $kind): Collection
@@ -119,6 +122,10 @@ class SiteController extends Controller
             $ctx = ['car' => $car, 'city' => $city, 'seo' => Seo::page($car), 'related_cars' => self::cars()->when($car->category_id, fn ($query) => $query->where('category_id', $car->category_id))->where('id', '!=', $car->id)->when($city, fn ($query) => $query->whereHas('cities', fn ($cities) => $cities->where('locations_city.id', $city->id)))->limit(3)->get(), 'faqs' => self::faqs()->where('car_id', $car->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [site_text('Автопарк'), catalog_url($city)], [localized($car, 'name'), language_url($path)]], 'car_whatsapp_message' => str_replace('%(car)s', localized($car, 'name'), site_text('Здравствуйте! Интересует аренда %(car)s.'))];
 
             return self::render('car_detail', $ctx);
+        }
+        if (preg_match('#^/car/[^/]+/$#', $path) && Car::public()->where('legacy_path', rtrim($path, '/'))->exists()) {
+            // The old site also answered car addresses with a trailing slash; send them to the canonical one.
+            return new RedirectResponse(language_url(rtrim($path, '/')), 301);
         }
         if ($page = Page::where('active', true)->where('path', $path)->with('translations')->first()) {
             $ctx = ['page' => $page, 'seo' => Seo::page($page), 'faqs' => self::faqs()->where('page_id', $page->id)->get(), 'conditions' => self::blocks('condition'), 'breadcrumbs' => [[site_text('Главная'), home_url()], [localized($page, 'title'), language_url($path)]]];

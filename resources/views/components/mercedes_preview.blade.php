@@ -12,8 +12,8 @@
       <div class="mercedes-caption mercedes-caption--end" data-band data-start="0.78" data-end="1"><p class="mercedes-eyebrow"><span>04 / <span class="brand-name">LEGIONAUTORENT</span></span></p><p class="mercedes-display mercedes-title" data-contrast>{{ dv('hero_film.end_title',get_defined_vars()) }}</p></div>
     </div>
     <div class="mercedes-recovery container" data-hero-recovery hidden><button class="mercedes-watch" type="button" data-hero-retry data-enable-label="{{ site_text('Включить анимацию') }}" data-retry-label="{{ site_text('Повторить загрузку анимации') }}">{{ site_text('Включить анимацию') }}</button></div>
-    <div class="mercedes-actions mercedes-actions--primary container" data-hero-actions><a class="button" href="#fleet">{{ site_text('Выбрать автомобиль') }} ↗</a><a class="button outline" href="{{ dv('site.whatsapp_url',get_defined_vars()) }}" target="_blank" rel="noopener noreferrer" data-event="click_whatsapp" data-context="hero">{{ icon('whatsapp') }} WhatsApp</a></div>
-    <div class="mercedes-bottom container"><a class="text-link" href="#fleet">{{ site_text('К автопарку') }} <span aria-hidden="true">↘</span></a></div>
+    <div class="mercedes-actions mercedes-actions--primary container" data-hero-actions><a class="button" href="#fleet">{{ site_text('Выбрать автомобиль') }} {{ icon('arrow') }}</a><a class="button outline" href="{{ dv('site.whatsapp_url',get_defined_vars()) }}" target="_blank" rel="noopener noreferrer" data-event="click_whatsapp" data-context="hero">{{ icon('whatsapp') }} WhatsApp</a></div>
+    <div class="mercedes-bottom container"><a class="text-link" href="#fleet">{{ site_text('К автопарку') }} {{ icon('arrow-down') }}</a></div>
     <div class="mercedes-chapter" aria-hidden="true"><span data-chapter>01</span><i></i><span>04</span></div>
     <div class="mercedes-progress" aria-hidden="true"><span></span></div>
   </div></div>

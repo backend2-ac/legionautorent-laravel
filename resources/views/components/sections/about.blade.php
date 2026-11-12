@@ -5,7 +5,7 @@
             <p class="eyebrow">{{ site_text('О компании') }} / <span class="brand-name">LEGIONAUTORENT</span></p>
             <h2 id="about-title">{{ site_text('8 лет в прокате автомобилей') }}</h2>
             <p>{{ site_text('LEGIONAUTORENT — прокат автомобилей без водителя с филиалами в городах Казахстана. Работаем круглосуточно, без выходных, и привозим автомобиль туда, где он вам нужен.') }}</p>
-            <a class="text-link" href="{{ language_url('/about/') }}">{{ site_text('Подробнее о компании') }} ↗</a>
+            <a class="text-link" href="{{ language_url('/about/') }}">{{ site_text('Подробнее о компании') }} {{ icon('arrow') }}</a>
         </div>
         <dl class="about-facts">
             <div><dt>8</dt><dd>{{ site_text('лет на рынке проката') }}</dd></div>

@@ -216,7 +216,7 @@ function richtext(string $text): HtmlString
 }
 function icon(string $name): HtmlString
 {
-    return new HtmlString('<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#legion-icon-'.e($name).'"/></svg>');
+    return new HtmlString('<svg class="icon icon-'.e($name).'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#legion-icon-'.e($name).'"/></svg>');
 }
 function icon_sprite(): HtmlString
 {

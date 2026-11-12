@@ -23,6 +23,7 @@ class InstagramReviewsTest extends CatalogueTestCase
 
         $response = $this->get('/')->assertOk()->assertSee('data-reels', false)->assertSee('Поездка на Lexus LX');
         $response->assertSee('data-instgrm-permalink="https://www.instagram.com/reel/AbC_123-x/"', false);
+        $response->assertSee('data-reels-track', false)->assertSee('data-reels-prev', false)->assertSee('data-reels-next', false);
         $this->assertStringContainsString('https://www.instagram.com', $response->headers->get('Content-Security-Policy'));
     }
 

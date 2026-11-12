@@ -56,6 +56,9 @@ class MigrationParityTest extends CatalogueTestCase
         foreach (['/booking/' => '/contacts/', '/callback/' => '/contacts/', '/kk/callback/' => '/kk/contacts/', '/request-success/' => '/'] as $old => $target) {
             $this->get($old)->assertRedirect($target)->assertStatus(301);
         }
+        $car = Car::public()->first();
+        $this->get($car->legacy_path.'/')->assertStatus(301)->assertRedirect($car->legacy_path);
+        $this->get('/car/missing-car/')->assertNotFound();
         $this->get('/kz/')->assertNotFound();
         $this->get('/missing-legacy-page/')->assertNotFound();
         $retired = json_decode(file_get_contents(resource_path('data/legacy-500-paths.json')), true);
