@@ -135,3 +135,13 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{border-color:rgb
 .catalog-sidebar .field:focus-within label,.quick-filter>div:focus-within label{color:#f3f1e9}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+
+/* Car photos are square and carry the logo in a corner: show each photo whole, never cropped. */
+.gallery figure{background:var(--garage,#10100f)}
+.gallery img{aspect-ratio:1/1;max-height:min(78vh,720px);object-fit:contain}
+.fleet-empty{margin-top:32px}
+.gallery-zoom-label{top:16px;bottom:auto}
+/* Card photos are square like the originals, so the logo in the corner stays in frame. */
+.car-photo{aspect-ratio:1/1;flex-shrink:0}
+.car-card{contain-intrinsic-size:auto 670px}
+@media(max-width:600px){.car-card{contain-intrinsic-size:auto 520px}}

@@ -27,21 +27,24 @@ function initFleets(root=document){
     if(fleet.dataset.ready)return;fleet.dataset.ready='true';
     const grid=$('[data-fleet-grid]',fleet),cards=[...grid.querySelectorAll('.car-card')];
     const more=$('[data-show-more]',fleet),status=$('[data-fleet-status]',fleet),empty=$('[data-fleet-empty]',fleet);
+    // The home page lists the whole fleet at once; the catalogue pages in steps of 12.
+    const pageSize=fleet.hasAttribute('data-fleet-all')?Infinity:12;
     let category='',sort='',expanded=false;
     const render=()=>{
       const matching=cards.filter(card=>!category||card.dataset.category===category);
       const ordered=sort?[...matching].sort((a,b)=>(Number(a.dataset.price)-Number(b.dataset.price))*(sort==='price'?1:-1)):matching;
       cards.forEach(card=>card.hidden=true);
-      ordered.forEach((card,index)=>{grid.append(card);card.hidden=!expanded&&index>=12;});
-      grid.dataset.ready='true';more.hidden=expanded||matching.length<=12;
-      status.textContent=matching.length?`${Math.min(expanded?matching.length:12,matching.length)} / ${matching.length}`:'';
+      ordered.forEach((card,index)=>{grid.append(card);card.hidden=!expanded&&index>=pageSize;});
+      grid.dataset.ready='true';
+      if(more)more.hidden=expanded||matching.length<=pageSize;
+      if(status)status.textContent=matching.length?`${Math.min(expanded?matching.length:pageSize,matching.length)} / ${matching.length}`:'';
       empty.hidden=!!matching.length||!cards.length;
       fleet.querySelectorAll('[data-category]:not(.car-card)').forEach(button=>{const active=button.dataset.category===category;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active));});
     };
     fleet.setCategory=value=>{category=value;expanded=false;render();};
     fleet.querySelectorAll('button[data-category]').forEach(button=>button.addEventListener('click',()=>fleet.setCategory(button.dataset.category)));
     $('[data-fleet-sort]',fleet)?.addEventListener('change',event=>{sort=event.target.value;expanded=false;render();});
-    more.addEventListener('click',()=>{expanded=true;render();});render();
+    more?.addEventListener('click',()=>{expanded=true;render();});render();
   });
 }
 initFleets();
