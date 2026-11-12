@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Car;
 use App\Models\City;
+use App\Models\MenuLink;
 use App\Models\Translation;
 use App\Services\Seo;
 use Illuminate\Support\Facades\DB;
@@ -87,6 +88,19 @@ class MigrationParityTest extends CatalogueTestCase
         $this->get($car->legacy_path)->assertSee('hreflang="kk"', false);
         $this->get('/kk'.$car->legacy_path)->assertSee('Қазақша H1')->assertSee('content="index,follow"', false);
         $this->get('/sitemap-cars.xml')->assertSee('/kk'.$car->legacy_path);
+    }
+
+    public function test_partners_page_is_in_the_header_and_mobile_menus(): void
+    {
+        (require database_path('migrations/2026_11_11_175009_apply_november_content_release.php'))->up();
+        $migration = require database_path('migrations/2026_11_12_090755_add_partners_to_menu.php');
+        $migration->up();
+        $migration->up();
+
+        $this->assertSame(['main', 'mobile'], MenuLink::where('path', '/partners/')->orderBy('area')->pluck('area')->all());
+        $this->get('/contacts/')->assertSeeInOrder(['class="desktop-nav"', 'href="/partners/">Партнёрам</a>', 'href="/contacts/">Контакты</a>'], false);
+        $this->get('/en/contacts/')->assertSee('href="/en/partners/">Partners</a>', false);
+        $this->get('/kk/contacts/')->assertSee('href="/kk/partners/">Серіктестерге</a>', false);
     }
 
     public function test_city_selection_survives_navigation_without_changing_canonical(): void
