@@ -62,7 +62,11 @@ export function initAmbientMotion(){
   const schedule=()=>{if(!frame&&!document.hidden)frame=queueFrame(draw);};
   document.querySelectorAll('[data-ambient-parallax],.steps-grid,.class-marquee').forEach(el=>observer.observe(el));
   window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',measure,{passive:true});
-  if(typeof window.ResizeObserver==='function'){const ro=new ResizeObserver(measure);ro.observe(document.body);}measure();
+  // Page height changes while lazy sections render during scrolling; measuring
+  // forces a layout, so wait for a calm moment instead of doing it mid-scroll.
+  let measureTimer;
+  const measureLater=()=>{clearTimeout(measureTimer);measureTimer=setTimeout(measure,180);};
+  if(typeof window.ResizeObserver==='function'){const ro=new ResizeObserver(measureLater);ro.observe(document.body);}measure();
   listenMedia(reduced,()=>{animations.forEach(a=>a.cancel());schedule();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelFrame(frame);frame=0;}else schedule();});
   window.addEventListener('pagehide',()=>{animations.forEach(a=>a.cancel());cancelFrame(frame);frame=0;});

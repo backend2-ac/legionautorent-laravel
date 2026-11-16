@@ -4,6 +4,9 @@ import {listenMedia,supportsWebp} from './browser-support.js';
 // One scroll pipeline on every device. No video seeks or autoplay permission.
 import {queueFrame,cancelFrame} from './motion-frame.js';
 
+// Spring stiffness (per ms) and the fastest the film may advance (share of the film per ms).
+const OMEGA=.0085,MAX_SPEED=1/850;
+
 export function initMercedesPreview(root){
   const data=JSON.parse(root.querySelector('#hero-frames').textContent);
   const canvas=root.querySelector('canvas'),poster=root.querySelector('img');
@@ -20,6 +23,12 @@ export function initMercedesPreview(root){
   let variant,enabled=false,dead=false,inView=true,frame=0,lastTick=0,shown=0,target=0,travel=1;
   let start=0,distance=1,end=1,lastWidth=innerWidth,drawn=-1,epoch=0,loaded=0;
   let activeFetches=0,activeDecodes=0,hasMoved=false,warmed=false,preview,hdReady=false,retryTimer,drawnQuality;
+  let velocity=0,paintedChapter='',paintedEnding='',slowTicks=0,timedTicks=0;
+  // Weak devices: a data saver, little memory or very few cores start in the light mode;
+  // any other device switches to it once it cannot keep up while the banner moves.
+  const connection=navigator.connection;
+  let lite=!!(connection?.saveData||/(^|-)(2g|3g)$/.test(connection?.effectiveType||'')||(navigator.deviceMemory&&navigator.deviceMemory<=2)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=2));
+  const enterLite=()=>{lite=true;renderer.setLite(true);root.classList.add('is-lite');root.dataset.lite='true';};
   const encoded=new Map(),images=new Map(),fetching=new Set(),decoding=new Set();
   const requests=[],decodeQueue=[],controllers=new Set(),failed=new Map();
   const maxImages=()=>Math.max(8,Math.min(compact.matches?24:32,Math.floor(76*1024*1024/((variant?.width||1280)*(variant?.height||720)*4))));
@@ -31,7 +40,7 @@ export function initMercedesPreview(root){
     if(portrait&&data.portrait)return 'portrait';
     const displayedWidth=portrait?innerWidth:Math.max(innerWidth,innerHeight*16/9);
     const pixels=displayedWidth*Math.min(devicePixelRatio||1,2);
-    return pixels>1280&&data.fullhd?'fullhd':pixels>768?'desktop':'mobile';
+    return pixels>1280&&data.fullhd&&!lite?'fullhd':pixels>768?'desktop':'mobile';
   };
   const workerJobs=new Map();let worker,workerReady=false,workerSequence=0,workerDisabled=false,workerTimer;
   const stopWorker=(disable=false)=>{
@@ -74,10 +83,14 @@ export function initMercedesPreview(root){
       actionsVisible=showActions;actions.style.opacity=showActions?'1':'0';actions.style.visibility=showActions?'visible':'hidden';
       actions.inert=!showActions;actions.setAttribute('aria-hidden',String(!showActions));
     }
-    progress.style.transform=`scaleX(${p})`;chapter.textContent=String(active+1).padStart(2,'0');
+    progress.style.transform=`scaleX(${p})`;
+    // Text and the inherited custom property invalidate layout/style for the
+    // whole banner, so they are written only when their value really changes.
+    const label=String(active+1).padStart(2,'0');
+    if(label!==paintedChapter){paintedChapter=label;chapter.textContent=label;}
     root.dataset.progress=p.toFixed(4);
-    const ending=clamp((p-.9)/.1);
-    root.style.setProperty('--hero-ending-opacity',String(ending*ending*(3-2*ending)));
+    const ending=clamp((p-.9)/.1),endingOpacity=(ending*ending*(3-2*ending)).toFixed(3);
+    if(endingOpacity!==paintedEnding){paintedEnding=endingOpacity;root.style.setProperty('--hero-ending-opacity',endingOpacity);}
   }
 
   function draw(index,image=images.get(index),quality='full'){
@@ -128,8 +141,10 @@ export function initMercedesPreview(root){
 
   function pumpDecodes(){
     while(enabled&&activeDecodes<2&&decodeQueue.length){
-      const index=decodeQueue.shift(),blob=encoded.get(index),generation=epoch;
-      if(!blob||images.has(index)){decoding.delete(index);continue;}
+      const index=decodeQueue.shift(),bytes=encoded.get(index),generation=epoch;
+      if(!bytes||images.has(index)){decoding.delete(index);continue;}
+      // The Blob copy is made only for frames that are actually decoded.
+      const blob=new Blob([bytes],{type:jpeg?'image/jpeg':'image/webp'});
       activeDecodes++;
       decode(blob).then(image=>{
         if(generation!==epoch||dead){image.close?.();return;}
@@ -157,10 +172,10 @@ export function initMercedesPreview(root){
       if(offset+4>buffer.byteLength)throw new Error('Incomplete frame pack');
       const size=view.getUint32(offset,true);offset+=4;
       if(!size||offset+size>buffer.byteLength)throw new Error('Invalid frame pack');
-      frames.push(new Blob([new Uint8Array(buffer,offset,size)],{type:jpeg?'image/jpeg':'image/webp'}));offset+=size;
+      frames.push(new Uint8Array(buffer,offset,size));offset+=size;
     }
     if(frames.length!==Math.min(data.packSize,data.count-index))throw new Error('Frame count mismatch');
-    frames.forEach(blob=>encoded.set(index++,blob));loaded++;
+    frames.forEach(bytes=>encoded.set(index++,bytes));loaded++;
     root.dataset.loadedPacks=String(loaded);
   }
 
@@ -174,7 +189,7 @@ export function initMercedesPreview(root){
 
   function pumpFetches(){
     if(!enabled||!hdReady||document.hidden||!inView)return;
-    while(activeFetches<2&&requests.length){
+    while(activeFetches<(lite?2:3)&&requests.length){
       const index=requests.shift(),generation=epoch;
       if(encoded.has(index*data.packSize)||fetching.has(index)||(failed.get(index)?.retryAt||0)>performance.now())continue;
       const controller=typeof window.AbortController==='function'?new AbortController():{abort(){},signal:undefined};
@@ -206,12 +221,20 @@ export function initMercedesPreview(root){
   }
 
   function prepareFrames(index,direction=1,stride=1){
-    // Discard obsolete speculative work. Never download all earlier packs just
-    // because the visitor has jumped further down the page.
+    // Discard obsolete speculative work, but keep everything between the frame
+    // on screen and the frame the scroll position asks for: a quick flick then
+    // plays through real frames instead of the low-resolution preview.
     const pack=Math.floor(index/data.packSize);
-    for(let i=requests.length-1;i>=0;i--)if(Math.abs(requests[i]-pack)>2)requests.splice(i,1);
+    const goalPack=Math.floor(Math.round(target*(data.count-1))/data.packSize);
+    const low=Math.min(pack,goalPack)-1,high=Math.max(pack,goalPack)+2;
+    for(let i=requests.length-1;i>=0;i--)if(requests[i]<low||requests[i]>high)requests.splice(i,1);
     needFrame(index);
     for(let step=1;step<=6;step++)needFrame(Math.max(0,Math.min(data.count-1,index+step*stride*direction)),false);
+    for(let next=pack+direction,ahead=1;ahead<=(lite?1:3)&&next>=0&&next<variant.packs.length;next+=direction,ahead++){
+      if(direction*(next-goalPack)>0)break;
+      needPack(next,false);
+    }
+    if(goalPack!==pack)needPack(goalPack,false);
   }
 
   function warmStart(){
@@ -227,21 +250,34 @@ export function initMercedesPreview(root){
     frame=0;
     if(!enabled||!inView||document.hidden){lastTick=0;return;}
     if(!hasMoved){primePoster();lastTick=0;return;}
-    const dt=lastTick?Math.min(64,now-lastTick):16.667;lastTick=now;
-    // Smooth wheel/touch input independently of display refresh rate, without
-    // the long catch-up delay after a quick swipe through the shorter pin.
-    const change=(target-shown)*(1-Math.exp(-dt/160));
-    const next=clamp(shown+Math.max(-dt/900,Math.min(dt/900,change)));
+    const measured=lastTick?now-lastTick:0;
+    const dt=lastTick?Math.min(64,measured):16.667;lastTick=now;
+    if(measured&&!lite&&++timedTicks>12){
+      // Two thirds of recent moving frames slower than ~30 fps: lighten the work.
+      slowTicks=slowTicks*.9+(measured>34?1:0);
+      if(timedTicks>24&&slowTicks>6.5)enterLite();
+    }
+    // A critically damped spring follows wheel/touch input: it eases in and out
+    // of a quick flick instead of jumping, independent of the refresh rate, and
+    // a speed limit keeps a long flick from skipping most of the film.
+    const offset=shown-target,decay=Math.exp(-OMEGA*dt),carry=velocity+OMEGA*offset;
+    let next=target+(offset+carry*dt)*decay;
+    velocity=(velocity-OMEGA*carry*dt)*decay;
+    const limit=MAX_SPEED*dt;
+    if(Math.abs(next-shown)>limit){next=shown+Math.sign(next-shown)*limit;velocity=Math.sign(velocity)*MAX_SPEED;}
+    next=clamp(next);
     const candidate=Math.round(next*(data.count-1));
     preview.request(candidate);
     const direction=travel;
     const stride=Math.max(1,Math.abs(candidate-Math.round(shown*(data.count-1))));
     // Input time keeps advancing while a slow decoder catches up. Keep only
     // current/predicted requests; obsolete speculative frames must not queue.
-    decodeQueue.forEach(index=>decoding.delete(index));decodeQueue.length=0;
+    const goal=Math.round(target*(data.count-1)),from=Math.min(candidate,goal)-6,to=Math.max(candidate,goal)+6;
+    for(let i=decodeQueue.length-1;i>=0;i--)if(decodeQueue[i]<from||decodeQueue[i]>to){decoding.delete(decodeQueue[i]);decodeQueue.splice(i,1);}
     prepareFrames(candidate,direction,stride);
-    shown=Math.abs(target-next)<.00015?target:next;
-    const resting=Math.abs(target-shown)<.00015;
+    const settled=Math.abs(target-next)<.00015&&Math.abs(velocity)<.00002;
+    shown=settled?target:next;if(settled)velocity=0;
+    const resting=settled;
     let available=preview.nearest(candidate,direction,drawn);
     const nearby=[...images.keys()].filter(index=>Math.abs(index-candidate)<=20&&(resting||(direction>0?index>=drawn:index<=drawn)));
     nearby.sort((a,b)=>Math.abs(a-candidate)-Math.abs(b-candidate));
@@ -249,7 +285,7 @@ export function initMercedesPreview(root){
     if(best!==undefined&&(!available||Math.abs(best-candidate)<=Math.abs(available.index-candidate)))available={index:best,image:images.get(best),quality:'full'};
     if(available&&draw(available.index,available.image,available.quality))paint(drawn/(data.count-1));
     else if(drawn<0&&draw(0))paint(0);
-    if(Math.abs(target-shown)>.00015)schedule();else lastTick=0;
+    if(!resting)schedule();else{lastTick=0;velocity=0;}
   }
 
   function schedule(){if(!frame&&enabled&&inView&&!document.hidden)frame=queueFrame(tick);}
@@ -289,7 +325,9 @@ export function initMercedesPreview(root){
   }
   function apply(){
     if(!canvas.getContext||!data.count||(reduced.matches&&!motionOptIn)){fallback(reduced.matches?'reduced-motion':'unavailable');return;}
-    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=data[variantName()];
+    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;velocity=0;paintedChapter='';paintedEnding='';
+    if(lite)enterLite();
+    variant=data[variantName()];
     if(!variant){fallback('format');return;}
     lockViewport();
     bands.forEach(band=>band.opacity=-1);

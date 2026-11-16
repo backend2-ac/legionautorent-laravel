@@ -100,3 +100,5 @@
 .mercedes-recovery .mercedes-watch{background:#10100f;cursor:pointer;border-color:var(--yellow);border-radius:2px}
 .mercedes-recovery .mercedes-watch:hover{background:var(--yellow);color:#10100f}
 .mercedes-recovery .mercedes-watch:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}
+/* Light mode for weak devices: no full-screen blend layer over the moving film. */
+.mercedes-preview.is-lite .mercedes-grain{display:none}
