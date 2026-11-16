@@ -4,13 +4,28 @@ namespace App\Http\Middleware;
 
 use App\Services\PublicContent;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PublicContext
 {
+    /**
+     * Script hosts of Google Tag Manager (GA4, Google Ads) and Yandex Metrika, as their CSP guides list them.
+     */
+    private const ANALYTICS_SCRIPTS = 'https://*.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz https://yastatic.net';
+
+    /**
+     * Hosts those tags send hits and pixels to.
+     */
+    private const ANALYTICS_HOSTS = 'https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.googleadservices.com https://*.g.doubleclick.net https://www.google.com https://www.google.kz https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz';
+
     public function handle(Request $r, Closure $next): Response
     {
+        $siteHost = parse_url((string) config('legion.site_url'), PHP_URL_HOST);
+        if (! config('legion.staging') && $siteHost && strtolower($r->getHost()) === 'www.'.$siteHost) {
+            return new RedirectResponse(config('legion.site_url').$r->getRequestUri(), 301);
+        }
         $path = $r->getPathInfo();
         $adminPath = trim(config('legion.admin_path'), '/');
         $private = $r->is($adminPath, $adminPath.'/*', 'control-legion', 'control-legion/*', 'livewire/*');
@@ -46,7 +61,21 @@ class PublicContext
         $response = $next($r);
         if (! $private) {
             $nonce = $r->attributes->get('nonce');
-            $policy = ["default-src 'self'", "script-src 'self' 'nonce-{$nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://mc.yandex.ru https://www.instagram.com", "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob: https://mc.yandex.ru https://www.google-analytics.com", "font-src 'self'", "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://mc.yandex.ru", 'frame-src https://yandex.ru https://www.googletagmanager.com https://www.instagram.com', "media-src 'self' blob:", "worker-src 'self' blob:", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"];
+            $policy = [
+                "default-src 'self'",
+                "script-src 'self' 'nonce-{$nonce}' ".self::ANALYTICS_SCRIPTS.' https://www.instagram.com',
+                "style-src 'self' 'unsafe-inline'",
+                "img-src 'self' data: blob: ".self::ANALYTICS_HOSTS,
+                "font-src 'self'",
+                "connect-src 'self' ".self::ANALYTICS_HOSTS.' wss://mc.yandex.ru wss://mc.yandex.com https://pagead2.googlesyndication.com',
+                'frame-src blob: https://yandex.ru https://mc.yandex.ru https://mc.yandex.com https://www.googletagmanager.com https://td.doubleclick.net https://www.instagram.com',
+                "media-src 'self' blob:",
+                "worker-src 'self' blob:",
+                "object-src 'none'",
+                "base-uri 'self'",
+                "form-action 'self'",
+                "frame-ancestors 'none'",
+            ];
             $response->headers->set('Content-Security-Policy', implode('; ', $policy));
         }
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');

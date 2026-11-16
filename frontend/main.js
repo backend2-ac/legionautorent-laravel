@@ -66,9 +66,27 @@ const startPageMotion=()=>{
 };
 motionTriggers.forEach(type=>window.addEventListener(type,startPageMotion,{passive:true}));
 window.dataLayer=window.dataLayer||[];
+const analytics=$('[data-analytics]');
+const metrikaId=Number(analytics?.dataset.metrika)||0;
+const leadGoals={click_whatsapp:'whatsapp',click_phone:'number'};
+// Leads keep counting the way the old site's tags expect: Metrika goals "whatsapp" and "number",
+// and a GTM click on the bare wa.me / tel: address, because the GTM triggers compare that address exactly
+// while our WhatsApp links carry a prefilled message.
+function trackLead(link,event){
+  const goal=leadGoals[link.dataset.event];
+  if(!analytics||!goal)return;
+  if(metrikaId)window.ym?.(metrikaId,'reachGoal',goal);
+  const href=link.href||'';
+  let bare=href;
+  if(!href.startsWith('tel:')){try{const url=new URL(href);bare=url.origin+url.pathname;}catch{return;}}
+  if(event.target===link&&href===bare)return;
+  window.dataLayer.push({event:'gtm.click','gtm.element':link,'gtm.elementUrl':bare,'gtm.elementClasses':link.className||'','gtm.elementId':link.id||'','gtm.elementTarget':link.target||''});
+}
 document.addEventListener('click',event=>{
   const link=event.target.closest('[data-event]');
-  if(link)window.dataLayer.push({event:link.dataset.event,context:link.dataset.context||'contact',page:location.pathname});
+  if(!link)return;
+  window.dataLayer.push({event:link.dataset.event,context:link.dataset.context||'contact',page:location.pathname});
+  trackLead(link,event);
 });
 const submitted=$('[data-page-event]');
 if(submitted)window.dataLayer.push({event:submitted.dataset.pageEvent,page:location.pathname});
@@ -153,13 +171,18 @@ if(filters&&window.fetch){
 const mercedesPreview=$('[data-mercedes-preview]');
 if(mercedesPreview)import('./mercedes-preview.js').then(({initMercedesPreview})=>initMercedesPreview(mercedesPreview)).catch(()=>{if(mercedesPreview.heroFallback)mercedesPreview.heroFallback('script-load');else{mercedesPreview.dataset.state='fallback';mercedesPreview.dataset.mode='static';}});
 // Defer analytics until LCP has had time to paint; retain all editable legacy IDs.
-const analytics=$('[data-analytics]');
+// GTM carries GA4 and Google Ads; Yandex Metrika is loaded directly, as on the old site.
 if(analytics){
   let loaded=false;
   const script=src=>{const tag=document.createElement('script');tag.async=true;tag.src=src;document.head.append(tag);};
+  if(metrikaId){
+    window.ym=window.ym||function(){(window.ym.a=window.ym.a||[]).push(arguments);};window.ym.l=Date.now();
+    window.ym(metrikaId,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+  }
   const start=()=>{
     if(loaded)return;loaded=true;
     if(analytics.dataset.gtm){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});script(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(analytics.dataset.gtm)}`);}
+    if(metrikaId)script('https://mc.yandex.ru/metrika/tag.js');
   };
   window.addEventListener('load',()=>setTimeout(()=>{if('requestIdleCallback'in window)requestIdleCallback(start,{timeout:4000});else start();},2500),{once:true});
 }
